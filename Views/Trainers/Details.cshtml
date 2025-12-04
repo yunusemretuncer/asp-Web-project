@@ -1,0 +1,61 @@
+﻿@model AspWebProject.Models.Trainer
+
+@{
+    ViewData["Title"] = "Trainer Details";
+}
+
+<h2>Trainer Details</h2>
+<hr />
+
+<div class="card p-4 shadow-sm">
+
+    <h3>@Model.FullName</h3>
+    <p class="text-muted">Expertise: <strong>@Model.Expertise</strong></p>
+
+    <p><strong>Fitness Center:</strong> @Model.FitnessCenter?.Name</p>
+
+    <hr />
+
+    <h4>Services Provided</h4>
+
+    @if (Model.TrainerServices.Any())
+    {
+        <ul>
+            @foreach (var s in Model.TrainerServices)
+            {
+                <li>@s.Service.Name</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No services assigned.</p>
+    }
+
+    <hr />
+
+    <h4>Weekly Availability</h4>
+
+    @if (Model.Availabilities.Any())
+    {
+        <ul>
+            @foreach (var a in Model.Availabilities)
+            {
+                <li>
+                    <strong>@a.Day:</strong>
+                    @a.StartTime.ToString(@"hh\:mm") - @a.EndTime.ToString(@"hh\:mm")
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No availability defined.</p>
+    }
+
+    <hr />
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+

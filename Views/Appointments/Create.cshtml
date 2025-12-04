@@ -1,0 +1,71 @@
+﻿@model Appointment
+
+<h2>Randevu Oluştur</h2>
+
+<form asp-action="Create">
+
+    <!-- Fitness Center -->
+    <div class="form-group">
+        <label>Fitness Center</label>
+        <select id="FitnessCenterId" name="FitnessCenterId" class="form-control"
+                asp-items="ViewBag.FitnessCenters">
+            <option value="">Seçiniz...</option>
+        </select>
+    </div>
+
+    <!-- Services -->
+    <div class="form-group mt-3">
+        <label>Hizmet (Service)</label>
+        <select id="ServiceId" name="ServiceId" class="form-control">
+            <option value="">Önce salon seçiniz...</option>
+        </select>
+    </div>
+
+    <!-- Trainers -->
+    <div class="form-group mt-3">
+        <label>Eğitmen (Trainer)</label>
+        <select id="TrainerId" name="TrainerId" class="form-control">
+            <option value="">Önce hizmet seçiniz...</option>
+        </select>
+    </div>
+
+    <!-- Appointment Time -->
+    <div class="form-group mt-3">
+        <label asp-for="Date"></label>
+        <input asp-for="Date" class="form-control" type="datetime-local" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Randevu Oluştur</button>
+
+</form>
+
+@section Scripts {
+    <script>
+        // 1) Fitness center seçildi → service getir
+        $('#FitnessCenterId').change(function () {
+            const id = $(this).val();
+
+            $('#ServiceId').html('<option>Yükleniyor...</option>');
+            $('#TrainerId').html('<option>Önce hizmet seçiniz...</option>');
+
+            $.get('/Services/GetByFitnessCenter?fitnessCenterId=' + id, function (list) {
+                let html = '<option value="">Hizmet seçiniz...</option>';
+                list.forEach(s => html += `<option value="${s.id}">${s.name}</option>`);
+                $('#ServiceId').html(html);
+            });
+        });
+
+        // 2) Service seçildi → o hizmeti veren trainerleri getir
+        $('#ServiceId').change(function () {
+            const id = $(this).val();
+
+            $('#TrainerId').html('<option>Yükleniyor...</option>');
+
+            $.get('/Trainers/GetByService?serviceId=' + id, function (list) {
+                let html = '<option value="">Eğitmen seçiniz...</option>';
+                list.forEach(t => html += `<option value="${t.id}">${t.fullName}</option>`);
+                $('#TrainerId').html(html);
+            });
+        });
+    </script>
+}

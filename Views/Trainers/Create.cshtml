@@ -1,0 +1,120 @@
+﻿@model AspWebProject.Models.ViewModels.TrainerEditViewModel
+
+<h1>Create Trainer</h1>
+
+<form  asp-action="Create" method="post">
+
+    <!-- FullName -->
+    <div class="form-group mb-3">
+        <label asp-for="Trainer.FullName"></label>
+        <input asp-for="Trainer.FullName" class="form-control" />
+        <span asp-validation-for="Trainer.FullName" class="text-danger"></span>
+    </div>
+
+    <!-- FitnessCenter -->
+    <div class="form-group mb-3">
+        <label asp-for="Trainer.FitnessCenterId">Fitness Center</label>
+        <select asp-for="Trainer.FitnessCenterId" id="FitnessCenterId" class="form-control" asp-items="ViewBag.FitnessCenterId">
+            <option value="">Bir salon seçiniz</option>
+        </select>
+        <span asp-validation-for="Trainer.FitnessCenterId" class="text-danger"></span>
+    </div>
+
+    <!-- Services -->
+    <h4 class="mt-4">Bu eğitmenin verebileceği hizmetler</h4>
+
+    <div id="services-area">
+        <p>Salon seçiniz...</p>
+    </div>
+
+
+
+
+    <div class="p-2">
+
+        @for (int i = 0; i < 5; i++)
+        {
+            var day = (DayOfWeek)(i + 1); // Monday–Friday
+
+            <div class="d-flex align-items-center border-bottom py-2">
+
+                <!-- Checkbox -->
+                <input type="checkbox"
+                       class="form-check-input me-2"
+                       name="Availabilities[@i].Enabled"
+                       value="true" />
+
+                <!-- Gün adı -->
+                <label class="me-3 fw-bold" style="width:140px; font-size:0.9rem;">
+                    @day.ToString()
+                </label>
+
+                <input type="hidden" name="Availabilities[@i].Day" value="@((int)day)" />
+
+                <!-- Başlangıç -->
+                <div class="d-flex flex-column me-3">
+                    <label class="form-label m-0" style="font-size:0.75rem;">Başlangıç</label>
+                    <input type="time" class="form-control form-control-sm"
+                           style="width:120px;"
+                           name="Availabilities[@i].StartTime" />
+                </div>
+
+                <!-- Bitiş -->
+                <div class="d-flex flex-column">
+                    <label class="form-label m-0" style="font-size:0.75rem;">Bitiş</label>
+                    <input type="time" class="form-control form-control-sm"
+                           style="width:120px;"
+                           name="Availabilities[@i].EndTime" />
+                </div>
+
+            </div>
+        }
+    </div>
+
+
+    <button type="submit" class="btn btn-primary mt-3">Kaydet</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById("FitnessCenterId").addEventListener("change", function () {
+
+            const centerId = this.value;
+            const area = document.getElementById("services-area");
+
+            if (!centerId) {
+                area.innerHTML = "<p>Salon seçiniz...</p>";
+                return;
+            }
+
+            // TrainersController içindeki GetServicesByCenter endpointi !!!
+            fetch(`/Trainers/GetServicesByCenter?fitnessCenterId=${centerId}`)
+                .then(res => res.json())
+                .then(services => {
+
+                    if (!services || services.length === 0) {
+                        area.innerHTML = "<p>Bu salonda hiç hizmet tanımlı değil.</p>";
+                        return;
+                    }
+
+                    let html = "<ul class='list-group'>";
+                    services.forEach(s => {
+                        html += `
+                            <li class="list-group-item">
+                                <input type="checkbox" name="SelectedServiceIds" value="${s.id}" />
+                                ${s.name}
+                            </li>
+                        `;
+                    });
+
+                    html += "</ul>";
+                    area.innerHTML = html;
+                });
+        });
+    </script>
+
+}
+
+

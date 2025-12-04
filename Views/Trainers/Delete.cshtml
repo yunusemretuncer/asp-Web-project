@@ -1,0 +1,25 @@
+﻿@model AspWebProject.Models.Trainer
+
+@{
+    ViewData["Title"] = "Delete Trainer";
+}
+
+<h2>Delete Trainer</h2>
+<hr />
+
+<div class="alert alert-danger">
+    <strong>@Model.FullName</strong> adlı eğitmeni silmek istediğinize emin misiniz?
+</div>
+
+<div class="mb-3">
+    <strong>Fitness Center:</strong> @Model.FitnessCenter?.Name <br />
+    <strong>Expertise:</strong> @Model.Expertise <br />
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+

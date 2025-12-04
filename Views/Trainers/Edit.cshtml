@@ -1,0 +1,135 @@
+﻿@model AspWebProject.Models.ViewModels.TrainerEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Trainer";
+}
+
+<h2>Edit Trainer</h2>
+<hr />
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Trainer.Id" />
+
+    <!-- FULL NAME -->
+    <div class="form-group mb-3">
+        <label asp-for="Trainer.FullName"></label>
+        <input asp-for="Trainer.FullName" class="form-control" />
+        <span asp-validation-for="Trainer.FullName" class="text-danger"></span>
+    </div>
+
+    <!-- FITNESS CENTER -->
+    <div class="form-group mb-3">
+        <label asp-for="Trainer.FitnessCenterId">Fitness Center</label>
+        <select asp-for="Trainer.FitnessCenterId" class="form-control"
+                asp-items="ViewBag.FitnessCenterId">
+            <option value="">Select Center</option>
+        </select>
+    </div>
+
+    <!-- SERVICES -->
+    <h4>Services Provided</h4>
+    <div class="border rounded p-3 mb-3">
+        @foreach (var s in Model.AllServices)
+        {
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       value="@s.Id"
+                       name="SelectedServiceIds"
+                       @(Model.SelectedServiceIds.Contains(s.Id) ? "checked" : "") />
+
+                <label class="form-check-label">@s.Name</label>
+            </div>
+        }
+    </div>
+
+    <!-- AVAILABILITY -->
+    <h4>Weekly Availability</h4>
+
+    <div class="row">
+        @for (int i = 0; i < Model.Availabilities.Count; i++)
+        {
+            <div class="col-md-6 mb-3">
+                <div class="border p-2 rounded">
+
+                    <div class="form-check mb-2">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               name="Availabilities[@i].Enabled"
+                               value="true"
+                               @(Model.Availabilities[i].Enabled ? "checked" : "") />
+
+                        <label class="form-check-label">
+                            @Model.Availabilities[i].Day
+                        </label>
+
+                        <input type="hidden"
+                               name="Availabilities[@i].Day"
+                               value="@Model.Availabilities[i].Day" />
+                    </div>
+
+                    <label>Start</label>
+                    <input type="time"
+                           name="Availabilities[@i].StartTime"
+                           value="@Model.Availabilities[i].StartTime"
+                           class="form-control" />
+
+                    <label class="mt-2">End</label>
+                    <input type="time"
+                           name="Availabilities[@i].EndTime"
+                           value="@Model.Availabilities[i].EndTime"
+                           class="form-control" />
+                </div>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary mt-3" type="submit">Save</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById("FitnessCenterId").addEventListener("change", function () {
+
+            const centerId = this.value;
+            const area = document.getElementById("services-area");
+
+            if (!centerId) {
+                area.innerHTML = "<p>Salon seçiniz...</p>";
+                return;
+            }
+
+            // TrainersController / GetServicesByCenter
+            fetch(`/Trainers/GetServicesByCenter?fitnessCenterId=${centerId}`)
+                .then(res => res.json())
+                .then(services => {
+
+                    if (!services || services.length === 0) {
+                        area.innerHTML = "<p>Bu salonda hiç hizmet tanımlı değil.</p>";
+                        return;
+                    }
+
+                    let html = "<ul class='list-group'>";
+                    services.forEach(s => {
+                        html += `
+                            <li class="list-group-item">
+                                <input type="checkbox" name="SelectedServiceIds" value="${s.id}" />
+                                ${s.name}
+                            </li>
+                        `;
+                    });
+
+                    html += "</ul>";
+                    area.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error("Service fetch error:", err);
+                    area.innerHTML = "<p>Hizmetler yüklenirken hata oluştu.</p>";
+                });
+        });
+    </script>
+}
+
