@@ -293,3 +293,4 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\refint\Asp
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.pdb
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.genruntimeconfig.cache
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\ref\AspWebProject.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.sourcelink.json

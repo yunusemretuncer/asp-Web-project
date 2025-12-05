@@ -10,6 +10,7 @@
         <select id="FitnessCenterId" name="FitnessCenterId" class="form-control"
                 asp-items="ViewBag.FitnessCenters">
             <option value="">Seçiniz...</option>
+            <span asp-validation-for="FitnessCenterId" class="text-danger"></span>
         </select>
     </div>
 
@@ -19,6 +20,7 @@
         <select id="ServiceId" name="ServiceId" class="form-control">
             <option value="">Önce salon seçiniz...</option>
         </select>
+        <span asp-validation-for="ServiceId" class="text-danger"></span>
     </div>
 
     <!-- Trainers -->
@@ -27,6 +29,7 @@
         <select id="TrainerId" name="TrainerId" class="form-control">
             <option value="">Önce hizmet seçiniz...</option>
         </select>
+        <span asp-validation-for="TrainerId" class="text-danger"></span>
     </div>
 
     <!-- Appointment Time -->
