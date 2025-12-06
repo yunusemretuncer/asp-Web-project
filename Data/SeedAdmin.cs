@@ -8,7 +8,7 @@
     {
         public static async Task InitializeAsync(UserManager<ApplicationUser> userManager)
         {
-            string adminEmail = "ogrencinumarasi@sakarya.edu.tr";
+            string adminEmail = "admin@sakarya.edu.tr";
             string adminPassword = "sau";
 
             if (await userManager.FindByEmailAsync(adminEmail) == null)

@@ -7,7 +7,7 @@
         
         public string UserId { get; set; }
         public ApplicationUser? User { get; set; }
-
+        
         public int FitnessCenterId { get; set; }
         public FitnessCenter? FitnessCenter { get; set; }
 

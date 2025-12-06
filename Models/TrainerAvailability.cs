@@ -2,6 +2,7 @@
 {
     public class TrainerAvailability
     {
+        
         public int Id { get; set; }
 
         public int TrainerId { get; set; }
