@@ -31,6 +31,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
+
             <th></th>
         </tr>
     </thead>
@@ -53,14 +54,40 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
-            
+
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+                @if (item.Status == AppointmentStatus.Pending)
+                {
+                     <span class="text-warning">Pending</span>
+                }
+                else if (item.Status == AppointmentStatus.Approved)
+                {
+                     <span class="text-success">Approved</span>
+                }
+                else
+                {
+                     <span class="text-danger">Rejected</span>
+                }
+                </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        if (item.Status == AppointmentStatus.Pending)
+                        {
+                            <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline">
+                                <button class="btn btn-success btn-sm">Approve</button>
+                            </form>
+
+                            <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline">
+                                <button class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                        }
+                    }
+
             </td>
         </tr>
 }

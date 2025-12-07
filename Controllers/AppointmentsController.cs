@@ -244,5 +244,32 @@ namespace AspWebProject.Controllers
         {
             return _context.Appointments.Any(e => e.Id == id);
         }
+
+        // ADMIN ACTIONS onaylama
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var app = await _context.Appointments.FindAsync(id);
+            if (app == null) return NotFound();
+
+            app.Status = AppointmentStatus.Approved;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+        // ADMIN ACTIONS reddetme
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Reject(int id)
+        {
+            var app = await _context.Appointments.FindAsync(id);
+            if (app == null) return NotFound();
+
+            app.Status = AppointmentStatus.Rejected;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
     }
 }

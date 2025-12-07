@@ -1,6 +1,7 @@
 ﻿using AspWebProject.Data;
 using AspWebProject.Models;
 using AspWebProject.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using NuGet.DependencyResolver;
 
 namespace AspWebProject.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class TrainersController : Controller
     {
         private readonly ApplicationDbContext _context;
