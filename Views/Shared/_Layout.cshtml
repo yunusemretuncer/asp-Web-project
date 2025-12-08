@@ -10,63 +10,96 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AspWebProject</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    AspWebProject
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    <!-- SOL MENÜ -->
                     <ul class="navbar-nav flex-grow-1">
+
+                        <!-- HOME (herkese görünür) -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        
-                        @if (User.Identity.IsAuthenticated)
+
+                        @if (!User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profil</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout">Çıkış</a>
-                            </li>
-                        }
-                        else
-                        {
+                            <!-- GİRİŞ YAPMAMIŞ KULLANICI -->
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Giriş</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
                             </li>
                         }
-                        @if (User.IsInRole("Admin"))
+                        else if (User.IsInRole("Admin"))
                         {
+                            <!-- ADMIN MENÜSÜ -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="FitnessCenter" asp-action="Index">Salonlar</a>
+                                <a class="nav-link text-dark" asp-controller="FitnessCenters" asp-action="Index">Fitness Centers</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Services" asp-action="Index">Services</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Trainers" asp-action="Index">Trainers</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Index">Appointments</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="FitnessCenters" asp-action="Index">Fitness Centers</a>
-                        </li>
+                        else if (User.IsInRole("User"))
+                        {
+                            <!-- NORMAL USER MENÜSÜ -->
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Index">Appointments</a>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Services" asp-action="Index">Services</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Trainers" asp-action="Index">Trainers</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Index">Appointments</a>
-                        </li>
                     </ul>
+
+                    <!-- SAĞ MENÜ (Profil & Logout) -->
+                    <ul class="navbar-nav">
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                    Profil
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                    <button class="btn nav-link text-dark" type="submit">Çıkış</button>
+                                </form>
+                            </li>
+                        }
+
+                    </ul>
+
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -75,14 +108,18 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - AspWebProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - AspWebProject -
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
 
 

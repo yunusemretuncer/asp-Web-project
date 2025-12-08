@@ -22,14 +22,16 @@ namespace AspWebProject.Controllers
         {
             var trainers = _context.TrainerServices
                 .Where(ts => ts.ServiceId == serviceId)
+                .Include(ts => ts.Trainer)
                 .Select(ts => new {
-                    ts.Trainer.Id,
-                    ts.Trainer.FullName
+                    id = ts.Trainer.Id,
+                    fullName = ts.Trainer.FullName
                 })
                 .ToList();
 
             return Json(trainers);
         }
+
 
 
         // =====================================================

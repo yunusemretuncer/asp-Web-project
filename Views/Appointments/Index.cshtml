@@ -71,22 +71,23 @@
                 </td>
 
             <td>
+                
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    @if (User.IsInRole("Admin"))
+                 @if (User.IsInRole("Admin"))
+                {
+                    if (item.Status == AppointmentStatus.Pending)
                     {
-                        if (item.Status == AppointmentStatus.Pending)
-                        {
-                            <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline">
-                                <button class="btn btn-success btn-sm">Approve</button>
-                            </form>
+                        <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline">
+                        <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
 
-                            <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline">
-                                <button class="btn btn-danger btn-sm">Reject</button>
-                            </form>
-                        }
+                        <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline">
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                        </form>
                     }
+                }   
 
             </td>
         </tr>
