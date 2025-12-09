@@ -1,1 +1,33 @@
-[]
+[
+  {
+    "ContainingType": "TrainersApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/TrainersApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainersApiController",
+    "Method": "GetAvailable",
+    "RelativePath": "api/TrainersApi/available",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "time",
+        "Type": "System.TimeSpan",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

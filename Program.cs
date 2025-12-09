@@ -24,7 +24,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
-
+builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -64,6 +64,9 @@ app.MapControllerRoute(
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
+
+
+app.MapControllers();   // API için şart
 
 
 
