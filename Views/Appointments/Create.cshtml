@@ -7,14 +7,14 @@
     <!-- Fitness Center -->
     <div class="form-group">
         <label>Fitness Center</label>
-        <select id="FitnessCenterId" name="FitnessCenterId" class="form-control"
-                asp-items="ViewBag.FitnessCenters">
+        <select id="FitnessCenterId" name="FitnessCenterId"
+                class="form-control" asp-items="ViewBag.FitnessCenters">
             <option value="">Seçiniz...</option>
-            <span asp-validation-for="FitnessCenterId" class="text-danger"></span>
         </select>
+        <span asp-validation-for="FitnessCenterId" class="text-danger"></span>
     </div>
 
-    <!-- Services -->
+    <!-- Service -->
     <div class="form-group mt-3">
         <label>Hizmet (Service)</label>
         <select id="ServiceId" name="ServiceId" class="form-control">
@@ -23,7 +23,7 @@
         <span asp-validation-for="ServiceId" class="text-danger"></span>
     </div>
 
-    <!-- Trainers -->
+    <!-- Trainer -->
     <div class="form-group mt-3">
         <label>Eğitmen (Trainer)</label>
         <select id="TrainerId" name="TrainerId" class="form-control">
@@ -32,43 +32,87 @@
         <span asp-validation-for="TrainerId" class="text-danger"></span>
     </div>
 
-    <!-- Appointment Time -->
+    <!-- Date -->
     <div class="form-group mt-3">
-        <label asp-for="Date"></label>
-        <input asp-for="Date" class="form-control" type="datetime-local" />
+        <label>Tarih</label>
+        <input id="AppointmentDate" type="date" name="Date"
+               class="form-control" required />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <!-- Hour -->
+    <div class="form-group mt-3">
+        <label>Saat</label>
+        <select id="HourDropdown" name="HourString" class="form-control" required>
+            <option value="">Önce tarih seçiniz...</option>
+        </select>
     </div>
 
     <button type="submit" class="btn btn-primary mt-3">Randevu Oluştur</button>
-
 </form>
 
 @section Scripts {
     <script>
-        // 1) Fitness center seçildi → service getir
-        $('#FitnessCenterId').change(function () {
+        // --- 1) Fitness Center → Service ---
+        $("#FitnessCenterId").change(function () {
             const id = $(this).val();
 
-            $('#ServiceId').html('<option>Yükleniyor...</option>');
-            $('#TrainerId').html('<option>Önce hizmet seçiniz...</option>');
+            $("#ServiceId").html('<option>Yükleniyor...</option>');
+            $("#TrainerId").html('<option>Önce hizmet seçiniz...</option>');
+            $("#HourDropdown").html('<option>Önce tarih seçiniz...</option>');
 
-            $.get('/Services/GetByFitnessCenter?fitnessCenterId=' + id, function (list) {
+            $.get(`/Services/GetByFitnessCenter?fitnessCenterId=${id}`, function (list) {
                 let html = '<option value="">Hizmet seçiniz...</option>';
                 list.forEach(s => html += `<option value="${s.id}">${s.name}</option>`);
-                $('#ServiceId').html(html);
+                $("#ServiceId").html(html);
             });
         });
 
-        // 2) Service seçildi → o hizmeti veren trainerleri getir
-        $('#ServiceId').change(function () {
+        // --- 2) Service → Trainer ---
+        $("#ServiceId").change(function () {
             const id = $(this).val();
+            $("#TrainerId").html('<option>Yükleniyor...</option>');
+            $("#HourDropdown").html('<option>Önce tarih seçiniz...</option>');
 
-            $('#TrainerId').html('<option>Yükleniyor...</option>');
-
-            $.get('/Trainers/GetByService?serviceId=' + id, function (list) {
+            $.get(`/Trainers/GetByService?serviceId=${id}`, function (list) {
                 let html = '<option value="">Eğitmen seçiniz...</option>';
                 list.forEach(t => html += `<option value="${t.id}">${t.fullName}</option>`);
-                $('#TrainerId').html(html);
+                $("#TrainerId").html(html);
             });
+        });
+
+        // --- 3) Date seçilince saatleri getir ---
+        $("#AppointmentDate").change(function () {
+
+            console.log("DATE CHANGE WORKING!");
+
+            const dateVal = $(this).val();
+            console.log("VAL = " + dateVal);
+
+            const trainerId = $("#TrainerId").val();
+            const serviceId = $("#ServiceId").val();
+
+            if (!trainerId || !serviceId) {
+                console.log("Trainer veya Service seçili değil!");
+                $("#HourDropdown").html('<option>Önce eğitmen seçiniz...</option>');
+                return;
+            }
+
+            console.log("Request gönderiliyor: ");
+            console.log(`/Appointments/GetAvailableHours?trainerId=${trainerId}&serviceId=${serviceId}&date=${dateVal}`);
+
+            $.get(`/Appointments/GetAvailableHours?trainerId=${trainerId}&serviceId=${serviceId}&date=${dateVal}`,
+                function (hours) {
+
+                    let html = "";
+
+                    if (hours.length === 0)
+                        html = '<option>Müsait saat yok</option>';
+                    else
+                        hours.forEach(h => html += `<option value="${h}">${h}</option>`);
+
+                    $("#HourDropdown").html(html);
+                });
         });
     </script>
 }

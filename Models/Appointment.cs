@@ -1,4 +1,6 @@
-﻿namespace AspWebProject.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AspWebProject.Models
 {
     public class Appointment
     {
@@ -18,7 +20,8 @@
         public Service? Service { get; set; }
 
         public DateTime Date { get; set; }
-
+        [NotMapped]
+        public string HourString { get; set; }
 
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
     }

@@ -93,6 +93,8 @@ namespace AspWebProject.Controllers
                 ViewBag.FitnessCenters = new SelectList(_context.FitnessCenters, "Id", "Name");
                 return View(appointment);
             }
+            appointment.Date = appointment.Date.Date
+       .Add(TimeSpan.Parse(appointment.HourString));
 
             appointment.Status = AppointmentStatus.Pending;
 
@@ -271,5 +273,61 @@ namespace AspWebProject.Controllers
 
             return RedirectToAction("Index");
         }
+
+        // AJAX: Belirli bir eğitmen, hizmet ve tarihe göre müsait saatleri al
+        [HttpGet]
+        public async Task<IActionResult> GetAvailableHours(int trainerId, int serviceId, DateTime date)
+        {
+            var service = await _context.Services.FindAsync(serviceId);
+            if (service == null)
+                return BadRequest("Service not found");
+
+            int duration = service.Duration;
+
+            var day = date.DayOfWeek;
+
+            // Eğitmenin o günkü çalışma saatleri
+            var availability = await _context.TrainerAvailabilities
+                .Where(a => a.TrainerId == trainerId && a.Day == day)
+                .ToListAsync();
+
+            if (!availability.Any())
+                return Ok(new List<string>());
+
+            List<TimeSpan> possibleHours = new();
+
+            foreach (var a in availability)
+            {
+                TimeSpan cursor = a.StartTime;
+
+                while (cursor.Add(TimeSpan.FromHours(duration)) <= a.EndTime)
+                {
+                    possibleHours.Add(cursor);
+                    cursor = cursor.Add(TimeSpan.FromHours(1));
+                }
+            }
+
+            // Aynı gün alınmış randevular
+            var existing = await _context.Appointments
+                .Where(x => x.TrainerId == trainerId && x.Date.Date == date.Date)
+                .ToListAsync();
+
+            List<string> available = new();
+
+            foreach (var hour in possibleHours)
+            {
+                bool conflict = existing.Any(e =>
+                    e.Date.TimeOfDay < hour.Add(TimeSpan.FromHours(duration)) &&
+                    e.Date.TimeOfDay.Add(TimeSpan.FromHours(duration)) > hour
+                );
+
+                if (!conflict)
+                    available.Add(hour.ToString(@"hh\:mm"));
+            }
+
+            return Ok(available);
+        }
+
+
     }
 }
