@@ -27,11 +27,24 @@ namespace AspWebProject.Controllers
         }
 
 
-        // GET: Appointments
+        // GET: Appointments // linq ile join
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Appointments.Include(a => a.Service).Include(a => a.Trainer).Include(a => a.User).Include(a => a.FitnessCenter);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+
+            IQueryable<Appointment> query = _context.Appointments
+                .Include(a => a.Service)
+                .Include(a => a.Trainer)
+                .Include(a => a.FitnessCenter)
+                .Include(a => a.User);
+
+            if (!User.IsInRole("Admin"))
+            {
+                // USER → sadece kendi randevuları
+                query = query.Where(a => a.UserId == userId);
+            }
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Appointments/Details/5
@@ -83,23 +96,39 @@ namespace AspWebProject.Controllers
             Console.WriteLine($"TrainerId = {appointment.TrainerId}");
             Console.WriteLine($"AppointmentTime = {appointment.Date}");
 
+            // ================================
+            // 0) GEÇMİŞ TARİH ENGELİ
+            // ================================
+            if (appointment.Date.Date < DateTime.Today)
+            {
+                ModelState.AddModelError("", "Geçmiş bir tarihe randevu oluşturamazsınız.");
+            }
+
+            // Tarih bugün ise, geçmiş saat engeli
+            if (appointment.Date.Date == DateTime.Today)
+            {
+                if (appointment.Date.TimeOfDay <= DateTime.Now.TimeOfDay)
+                {
+                    ModelState.AddModelError("", "Geçmiş bir saate randevu oluşturamazsınız.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("MODEL STATE INVALID");
-                foreach (var m in ModelState)
-                    foreach (var err in m.Value.Errors)
-                        Console.WriteLine($"ERROR KEY={m.Key} -> {err.ErrorMessage}");
-
                 ViewBag.FitnessCenters = new SelectList(_context.FitnessCenters, "Id", "Name");
                 return View(appointment);
             }
+
+            // ================================
+            // 1) SAATİ BİRLEŞTİR (HOURSTRING)
+            // ================================
             appointment.Date = appointment.Date.Date
-       .Add(TimeSpan.Parse(appointment.HourString));
+                .Add(TimeSpan.Parse(appointment.HourString));
 
             appointment.Status = AppointmentStatus.Pending;
 
             // ================================
-            // 1) TRAINER O SAATTE BAŞKA RANDEVUDA MI?
+            // 2) EĞİTMEN O SAATTE BAŞKA RANDEVUDA MI?
             // ================================
             bool trainerBusy = _context.Appointments.Any(a =>
                 a.TrainerId == appointment.TrainerId &&
@@ -114,7 +143,7 @@ namespace AspWebProject.Controllers
             }
 
             // ================================
-            // 2) EĞİTMENİN O GÜN O SAATTE ÇALIŞIP ÇALIŞMADIĞI
+            // 3) EĞİTMEN O GÜN O SAATTE ÇALIŞIYOR MU?
             // ================================
             var day = appointment.Date.DayOfWeek;
             var time = appointment.Date.TimeOfDay;
@@ -136,12 +165,14 @@ namespace AspWebProject.Controllers
             }
 
             // ================================
-            // TÜM KONTROLLER GEÇTİ → KAYDET
+            // 4) KAYDET
             // ================================
             _context.Add(appointment);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+
 
 
 
@@ -327,6 +358,8 @@ namespace AspWebProject.Controllers
 
             return Ok(available);
         }
+
+
 
 
     }

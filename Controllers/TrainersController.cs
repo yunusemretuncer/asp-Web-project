@@ -9,7 +9,7 @@ using NuGet.DependencyResolver;
 
 namespace AspWebProject.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class TrainersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -220,6 +220,9 @@ namespace AspWebProject.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
+
 
 
 

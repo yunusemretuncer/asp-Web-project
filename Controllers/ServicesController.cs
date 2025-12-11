@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AspWebProject.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
