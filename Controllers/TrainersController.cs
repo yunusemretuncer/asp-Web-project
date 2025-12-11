@@ -39,14 +39,16 @@ namespace AspWebProject.Controllers
         // =====================================================
         public async Task<IActionResult> Index()
         {
-            var list = await _context.Trainers
+            ViewBag.FitnessCenters = await _context.FitnessCenters.ToListAsync();
+            ViewBag.Services = await _context.Services.ToListAsync();
+
+            var trainers = await _context.Trainers
                 .Include(t => t.FitnessCenter)
-                .Include(t => t.TrainerServices)
-                    .ThenInclude(ts => ts.Service)
                 .ToListAsync();
 
-            return View(list);
+            return View(trainers);
         }
+
 
         // =====================================================
         // DETAILS

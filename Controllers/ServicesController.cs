@@ -34,9 +34,10 @@ namespace AspWebProject.Controllers
         // GET: Services
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Services.Include(s => s.FitnessCenter);
-            return View(await applicationDbContext.ToListAsync());
+            ViewBag.FitnessCenters = await _context.FitnessCenters.ToListAsync();
+            return View();
         }
+
 
         // GET: Services/Details/5
         public async Task<IActionResult> Details(int? id)

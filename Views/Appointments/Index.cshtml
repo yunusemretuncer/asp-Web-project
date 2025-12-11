@@ -1,96 +1,156 @@
-﻿@model IEnumerable<AspWebProject.Models.Appointment>
-
-@{
-    ViewData["Title"] = "Appointments";
+﻿@{
+    ViewData["Title"] = "Randevular";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
-<h1>Index</h1>
+<h2>Randevular</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="row mb-3">
+    <a href="/Appointments/Create" class="btn btn-success mb-3">Yeni Randevu Oluştur</a>
+
+    <div class="col-md-3">
+        <label>Başlangıç Tarihi</label>
+        <input id="StartDate" type="date" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+        <label>Hizmet</label>
+        <select id="ServiceId" class="form-control">
+            <option value="0">Hepsi</option>
+            @foreach (var s in ViewBag.Services)
+            {
+                <option value="@s.Id">@s.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Eğitmen</label>
+        <select id="TrainerId" class="form-control">
+            <option value="0">Hepsi</option>
+            @foreach (var t in ViewBag.Trainers)
+            {
+                <option value="@t.Id">@t.FullName</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label>Status</label>
+        <select id="Status" class="form-control">
+            <option value="">Hepsi</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    </div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="col-md-3 mt-3">
+            <label>Kullanıcı</label>
+            <select id="UserId" class="form-control">
+                <option value="all">Hepsi</option>
+                @foreach (var u in ViewBag.Users)
+                {
+                    <option value="@u.Id">@u.UserName</option>
+                }
+            </select>
+        </div>
+    }
+</div>
+
+<button id="FilterBtn" class="btn btn-primary mb-3">Filtrele</button>
+
+
+   
+
+
+
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trainer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-
-            <th></th>
+            <th>Tarih</th>
+            <th>Hizmet</th>
+            <th>Eğitmen</th>
+            <th>Salon</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Kullanıcı</th>
+            }
+            <th>Status</th>
+            <th>İşlem</th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                 @item.User?.FullName
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Trainer.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Service.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-
-            <td>
-                @if (item.Status == AppointmentStatus.Pending)
-                {
-                     <span class="text-warning">Pending</span>
-                }
-                else if (item.Status == AppointmentStatus.Approved)
-                {
-                     <span class="text-success">Approved</span>
-                }
-                else
-                {
-                     <span class="text-danger">Rejected</span>
-                }
-                </td>
-
-            <td>
-                
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                 @if (User.IsInRole("Admin"))
-                {
-                    if (item.Status == AppointmentStatus.Pending)
-                    {
-                        <form asp-action="Approve" asp-route-id="@item.Id" method="post" style="display:inline">
-                        <button class="btn btn-success btn-sm">Approve</button>
-                        </form>
-
-                        <form asp-action="Reject" asp-route-id="@item.Id" method="post" style="display:inline">
-                        <button class="btn btn-danger btn-sm">Reject</button>
-                        </form>
-                    }
-                }   
-
-            </td>
-        </tr>
-}
+    <tbody id="tableBody">
+        <tr><td colspan="7">Veri bekleniyor...</td></tr>
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+
+        function getStatusBadge(status) {
+            if (status === "Approved") return `<span class="badge bg-success">Approved</span>`;
+            if (status === "Rejected") return `<span class="badge bg-danger">Rejected</span>`;
+            return `<span class="badge bg-warning text-dark">Pending</span>`;
+        }
+
+        function loadAppointments() {
+
+            const query = {
+                startDate: $("#StartDate").val(),
+                serviceId: $("#ServiceId").val(),
+                trainerId: $("#TrainerId").val(),
+                status: $("#Status").val(),
+                userId: $("#UserId").val()
+            };
+
+            $("#tableBody").html("<tr><td colspan='7'>Yükleniyor...</td></tr>");
+
+            $.get("/api/AppointmentsApi/filter", query, function (data) {
+
+                if (!data || data.length === 0) {
+                    $("#tableBody").html("<tr><td colspan='7'>Kayıt bulunamadı.</td></tr>");
+                    return;
+                }
+
+                let html = "";
+                data.forEach(item => {
+
+                    html += `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td>${item.service}</td>
+                            <td>${item.trainer}</td>
+                            <td>${item.center}</td>
+                            ${IsAdmin ? `<td>${item.user}</td>` : ""}
+                            <td>${getStatusBadge(item.status)}</td>
+                            <td>
+                                <a href="/Appointments/Details/${item.id}" class="btn btn-sm btn-info">Detay</a>
+                                ${IsAdmin ? `
+                                    <a href="/Appointments/Edit/${item.id}" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="/Appointments/Delete/${item.id}" class="btn btn-sm btn-danger">Delete</a>
+                                ` : ""}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                $("#tableBody").html(html);
+            });
+        }
+
+        const IsAdmin = @User.IsInRole("Admin").ToString().ToLower();
+
+        $("#FilterBtn").on("click", loadAppointments);
+
+        $(document).ready(loadAppointments);
+
+    </script>
+}
+
+
+
+
+

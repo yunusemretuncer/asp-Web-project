@@ -30,22 +30,22 @@ namespace AspWebProject.Controllers
         // GET: Appointments // linq ile join
         public async Task<IActionResult> Index()
         {
-            var userId = _userManager.GetUserId(User);
+            ViewBag.Services = await _context.Services.ToListAsync();
+            ViewBag.Trainers = await _context.Trainers.ToListAsync();
 
-            IQueryable<Appointment> query = _context.Appointments
-                .Include(a => a.Service)
-                .Include(a => a.Trainer)
-                .Include(a => a.FitnessCenter)
-                .Include(a => a.User);
-
-            if (!User.IsInRole("Admin"))
+            // Sadece Admin ise User listesi gelir
+            if (User.IsInRole("Admin"))
             {
-                // USER → sadece kendi randevuları
-                query = query.Where(a => a.UserId == userId);
+                ViewBag.Users = await _context.Users.ToListAsync();
+            }
+            else
+            {
+                ViewBag.Users = new List<ApplicationUser>(); // NULL OLMAMASI İÇİN
             }
 
-            return View(await query.ToListAsync());
+            return View();
         }
+
 
         // GET: Appointments/Details/5
         public async Task<IActionResult> Details(int? id)

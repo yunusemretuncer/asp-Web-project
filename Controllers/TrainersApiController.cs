@@ -13,33 +13,39 @@ public class TrainersApiController : ControllerBase
         _context = context;
     }
 
-    // GET: /api/trainers
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+   
+
+    [HttpGet("filter")]
+    public async Task<IActionResult> Filter(int? fitnessCenterId, DayOfWeek? day, int? serviceId)
     {
-        var trainers = await _context.Trainers
+        var query = _context.Trainers
+            .Include(t => t.FitnessCenter)
+            .Include(t => t.TrainerServices).ThenInclude(ts => ts.Service)
+            .Include(t => t.Availabilities)
+            .AsQueryable();
+
+        // Fitness center filtrele
+        if (fitnessCenterId.HasValue)
+            query = query.Where(t => t.FitnessCenterId == fitnessCenterId.Value);
+
+        // Gün filtrele
+        if (day.HasValue)
+            query = query.Where(t => t.Availabilities.Any(a => a.Day == day.Value));
+
+        // Hizmete göre filtrele
+        if (serviceId.HasValue)
+            query = query.Where(t => t.TrainerServices.Any(ts => ts.ServiceId == serviceId.Value));
+
+        var result = await query
             .Select(t => new {
                 t.Id,
                 t.FullName,
-                t.Expertise
+                t.Expertise,
+                FitnessCenter = t.FitnessCenter.Name
             })
             .ToListAsync();
 
-        return Ok(trainers);
+        return Ok(result);
     }
 
-    // GET: /api/trainers/available?date=2025-12-03&time=11:00
-    [HttpGet("available")]
-    public async Task<IActionResult> GetAvailable(DateTime date, TimeSpan time)
-    {
-        var trainers = await _context.Trainers
-            .Where(t => t.Availabilities.Any(a =>
-                a.Day == date.DayOfWeek &&
-                a.StartTime <= time &&
-                a.EndTime >= time
-            ))
-            .ToListAsync();
-
-        return Ok(trainers);
-    }
 }

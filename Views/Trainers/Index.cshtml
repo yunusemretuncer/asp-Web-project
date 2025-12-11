@@ -9,39 +9,93 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<div class="row mb-3">
+    <div class="col-3">
+        <label>Fitness Center</label>
+        <select id="FilterCenter" class="form-control">
+            <option value="">Hepsi</option>
+            @foreach (var fc in ViewBag.FitnessCenters)
+            {
+                <option value="@fc.Id">@fc.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-3">
+        <label>Çalışma Günü</label>
+        <select id="FilterDay" class="form-control">
+            <option value="">Hepsi</option>
+            @foreach (DayOfWeek d in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                <option value="@((int)d)">@d</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-3">
+        <label>Hizmet</label>
+        <select id="FilterService" class="form-control">
+            <option value="">Hepsi</option>
+            @foreach (var s in ViewBag.Services)
+            {
+                <option value="@s.Id">@s.Name</option>
+            }
+        </select>
+    </div>
+</div>
+<table class="table table-bordered" id="TrainerTable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Expertise)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FitnessCenter)
-            </th>
-            <th></th>
+            <th>İsim</th>
+            <th>Uzmanlık</th>
+            <th>Salon</th>
+            <th>İşlemler</th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Expertise)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FitnessCenter.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+    <tbody></tbody>
 </table>
+
+
+
+@section Scripts {
+    <script>
+                $(document).ready(function () {
+            loadFiltered(); // sayfa açılır açılmaz tabloyu doldur
+        });
+
+        function loadFiltered() {
+            const center = $("#FilterCenter").val();
+            const day = $("#FilterDay").val();
+            const service = $("#FilterService").val();
+
+            $.get("/api/TrainersApi/filter", {
+                fitnessCenterId: center,
+                day: day,
+                serviceId: service
+            }, function (list) {
+
+                let html = "";
+                list.forEach(t => {
+                    html += `
+                    <tr>
+                        <td>${t.fullName}</td>
+                        <td>${t.expertise}</td>
+                        <td>${t.fitnessCenter}</td>
+                        <td>
+                            <a href="/Trainers/Edit/${t.id}">Edit</a> |
+                            <a href="/Trainers/Details/${t.id}">Details</a> |
+                            <a href="/Trainers/Delete/${t.id}">Delete</a>
+                       </td>
+                    </tr>`;
+                });
+
+                $("#TrainerTable tbody").html(html);
+            });
+        }
+
+        $("#FilterCenter").change(loadFiltered);
+        $("#FilterDay").change(loadFiltered);
+        $("#FilterService").change(loadFiltered);
+
+    </script>
+}
