@@ -6,6 +6,7 @@
 <h2>Randevular</h2>
 
 <div class="row mb-3">
+
     <a href="/Appointments/Create" class="btn btn-success mb-3">Yeni Randevu Oluştur</a>
 
     <div class="col-md-3">
@@ -45,7 +46,7 @@
         </select>
     </div>
 
-    @if (User.IsInRole("Admin"))
+    @if (isAdmin)
     {
         <div class="col-md-3 mt-3">
             <label>Kullanıcı</label>
@@ -63,10 +64,6 @@
 <button id="FilterBtn" class="btn btn-primary mb-3">Filtrele</button>
 
 
-   
-
-
-
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -74,10 +71,12 @@
             <th>Hizmet</th>
             <th>Eğitmen</th>
             <th>Salon</th>
-            @if (User.IsInRole("Admin"))
+
+            @if (isAdmin)
             {
                 <th>Kullanıcı</th>
             }
+
             <th>Status</th>
             <th>İşlem</th>
         </tr>
@@ -87,15 +86,22 @@
     </tbody>
 </table>
 
+
+
+
 @section Scripts {
     <script>
 
+        const IsAdmin = @(isAdmin.ToString().ToLower());
+
+        // ----------------- STATUS BADGE -----------------
         function getStatusBadge(status) {
             if (status === "Approved") return `<span class="badge bg-success">Approved</span>`;
             if (status === "Rejected") return `<span class="badge bg-danger">Rejected</span>`;
             return `<span class="badge bg-warning text-dark">Pending</span>`;
         }
 
+        // ----------------- VERİ YÜKLE -------------------
         function loadAppointments() {
 
             const query = {
@@ -103,7 +109,7 @@
                 serviceId: $("#ServiceId").val(),
                 trainerId: $("#TrainerId").val(),
                 status: $("#Status").val(),
-                userId: $("#UserId").val()
+                userId: IsAdmin ? $("#UserId").val() : null
             };
 
             $("#tableBody").html("<tr><td colspan='7'>Yükleniyor...</td></tr>");
@@ -116,22 +122,36 @@
                 }
 
                 let html = "";
-                data.forEach(item => {
+
+                data.forEach(a => {
+
+                    let adminUserCol = IsAdmin ? `<td>${a.user}</td>` : "";
+
+                    let adminButtons = IsAdmin ? `
+                        <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-danger">Delete</a>
+                        <form method="post" action="/Appointments/Approve/${a.id}" style="display:inline;">
+                            <button class="btn btn-sm btn-success ms-1">Onayla</button>
+                        </form>
+                        <form method="post" action="/Appointments/Reject/${a.id}" style="display:inline;">
+                            <button class="btn btn-sm btn-danger ms-1">Reddet</button>
+                        </form>
+                    ` : "";
 
                     html += `
                         <tr>
-                            <td>${item.date}</td>
-                            <td>${item.service}</td>
-                            <td>${item.trainer}</td>
-                            <td>${item.center}</td>
-                            ${IsAdmin ? `<td>${item.user}</td>` : ""}
-                            <td>${getStatusBadge(item.status)}</td>
+                            <td>${a.date}</td>
+                            <td>${a.service}</td>
+                            <td>${a.trainer}</td>
+                            <td>${a.center}</td>
+
+                            ${adminUserCol}
+
+                            <td>${getStatusBadge(a.status)}</td>
+
                             <td>
-                                <a href="/Appointments/Details/${item.id}" class="btn btn-sm btn-info">Detay</a>
-                                ${IsAdmin ? `
-                                    <a href="/Appointments/Edit/${item.id}" class="btn btn-sm btn-warning">Edit</a>
-                                    <a href="/Appointments/Delete/${item.id}" class="btn btn-sm btn-danger">Delete</a>
-                                ` : ""}
+                                <a href="/Appointments/Details/${a.id}" class="btn btn-sm btn-info">Detay</a>
+                                ${adminButtons}
                             </td>
                         </tr>
                     `;
@@ -141,14 +161,14 @@
             });
         }
 
-        const IsAdmin = @User.IsInRole("Admin").ToString().ToLower();
 
         $("#FilterBtn").on("click", loadAppointments);
-
         $(document).ready(loadAppointments);
 
     </script>
 }
+
+
 
 
 
