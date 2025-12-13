@@ -18,14 +18,18 @@ public class AppointmentsApiController : ControllerBase
         _userManager = userManager;
     }
 
+
+
     // GET: api/appointments/filter
     [HttpGet("filter")]
     public async Task<IActionResult> Filter(
     DateTime? startDate,
     int? serviceId,
     int? trainerId,
-    AppointmentStatus? status,
-    string? userId)
+    string? status,
+    string? userId,
+    string mode = "future"
+)
     {
         var query = _context.Appointments
             .Include(a => a.Service)
@@ -34,42 +38,56 @@ public class AppointmentsApiController : ControllerBase
             .Include(a => a.User)
             .AsQueryable();
 
-        // Eğer admin değilse → sadece kendi randevuları
-        if (!User.IsInRole("Admin"))
+        // 🔥 GELECEK / GEÇMİŞ FİLTRESİ (EN ÖNEMLİ KISIM)
+        DateTime now = DateTime.Now;
+
+        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        bool isAdmin = User.IsInRole("Admin");
+
+        // 🔥 Admin değilse → sadece kendi randevularını görür
+        if (!isAdmin)
         {
-            query = query.Where(a => a.UserId == _userManager.GetUserId(User));
-        }
-        else
-        {
-            if (!string.IsNullOrEmpty(userId) && userId != "all")
-                query = query.Where(a => a.UserId == userId);
+            query = query.Where(a => a.UserId == currentUserId);
         }
 
-        if (startDate != null)
+        if (mode == "future")
+            query = query.Where(a => a.Date >= now);
+
+        if (mode == "past")
+            query = query.Where(a => a.Date < now);
+
+        // 🔥 Diğer filtreler
+        if (startDate.HasValue)
             query = query.Where(a => a.Date.Date >= startDate.Value.Date);
 
-        if (serviceId != null && serviceId > 0)
+        if (serviceId.HasValue && serviceId > 0)
             query = query.Where(a => a.ServiceId == serviceId);
 
-        if (trainerId != null && trainerId > 0)
+        if (trainerId.HasValue && trainerId > 0)
             query = query.Where(a => a.TrainerId == trainerId);
 
-        if (status != null)
-            query = query.Where(a => a.Status == status);
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(a => a.Status.ToString() == status);
+
+        if (!string.IsNullOrEmpty(userId) && userId != "all")
+            query = query.Where(a => a.UserId == userId);
 
         var result = await query
             .OrderBy(a => a.Date)
-            .Select(a => new {
-                a.Id,
+            .Select(a => new
+            {
+                id = a.Id,
                 date = a.Date.ToString("yyyy-MM-dd HH:mm"),
                 service = a.Service.Name,
                 trainer = a.Trainer.FullName,
                 center = a.FitnessCenter.Name,
-                status = a.Status.ToString(),
-                user = a.User.UserName // ADMIN için
+                user = a.User.UserName,
+                status = a.Status.ToString()
             })
             .ToListAsync();
 
         return Ok(result);
     }
+
+
 }

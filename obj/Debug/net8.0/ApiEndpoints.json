@@ -31,6 +31,11 @@
         "Name": "userId",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "mode",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

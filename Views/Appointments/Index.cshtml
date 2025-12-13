@@ -3,65 +3,83 @@
     bool isAdmin = User.IsInRole("Admin");
 }
 
-<h2>Randevular</h2>
+<h2 class="mb-4">Randevular</h2>
+<a href="/Appointments/Create">Yeni Randevu Oluştur</a>
+<!-- === FİLTRELERİ GÖSTER / GİZLE === -->
+<button id="ToggleFilters" class="btn btn-secondary mb-3">
+    Filtreleri Göster
+</button>
 
-<div class="row mb-3">
+<div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-3 bg-light">
 
-    <a href="/Appointments/Create" class="btn btn-success mb-3">Yeni Randevu Oluştur</a>
+    <div class="row">
 
-    <div class="col-md-3">
-        <label>Başlangıç Tarihi</label>
-        <input id="StartDate" type="date" class="form-control" />
-    </div>
+        <div class="col-md-3">
+            <label>Başlangıç Tarihi</label>
+            <input id="StartDate" type="date" class="form-control" />
+        </div>
 
-    <div class="col-md-3">
-        <label>Hizmet</label>
-        <select id="ServiceId" class="form-control">
-            <option value="0">Hepsi</option>
-            @foreach (var s in ViewBag.Services)
-            {
-                <option value="@s.Id">@s.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="col-md-3">
-        <label>Eğitmen</label>
-        <select id="TrainerId" class="form-control">
-            <option value="0">Hepsi</option>
-            @foreach (var t in ViewBag.Trainers)
-            {
-                <option value="@t.Id">@t.FullName</option>
-            }
-        </select>
-    </div>
-
-    <div class="col-md-3">
-        <label>Status</label>
-        <select id="Status" class="form-control">
-            <option value="">Hepsi</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-        </select>
-    </div>
-
-    @if (isAdmin)
-    {
-        <div class="col-md-3 mt-3">
-            <label>Kullanıcı</label>
-            <select id="UserId" class="form-control">
-                <option value="all">Hepsi</option>
-                @foreach (var u in ViewBag.Users)
+        <div class="col-md-3">
+            <label>Hizmet</label>
+            <select id="ServiceId" class="form-control">
+                <option value="0">Hepsi</option>
+                @foreach (var s in ViewBag.Services)
                 {
-                    <option value="@u.Id">@u.UserName</option>
+                    <option value="@s.Id">@s.Name</option>
                 }
             </select>
         </div>
-    }
+
+        <div class="col-md-3">
+            <label>Eğitmen</label>
+            <select id="TrainerId" class="form-control">
+                <option value="0">Hepsi</option>
+                @foreach (var t in ViewBag.Trainers)
+                {
+                    <option value="@t.Id">@t.FullName</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Status</label>
+            <select id="Status" class="form-control">
+                <option value="">Hepsi</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        @if (isAdmin)
+        {
+            <div class="col-md-3 mt-3">
+                <label>Kullanıcı</label>
+                <select id="UserId" class="form-control">
+                    <option value="all">Hepsi</option>
+                    @foreach (var u in ViewBag.Users)
+                    {
+                        <option value="@u.Id">@u.UserName</option>
+                    }
+                </select>
+            </div>
+        }
+
+    </div>
+
+    <button id="FilterBtn" class="btn btn-primary mt-3">Filtrele</button>
 </div>
 
-<button id="FilterBtn" class="btn btn-primary mb-3">Filtrele</button>
+
+<!-- === TABS: GELECEK / GEÇMİŞ === -->
+<ul class="nav nav-tabs mb-3" id="AppointmentTabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-mode="future" href="#">Gelecek Randevular</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-mode="past" href="#">Geçmiş Randevular</a>
+    </li>
+</ul>
 
 
 <table class="table table-bordered">
@@ -86,30 +104,30 @@
     </tbody>
 </table>
 
-
-
-
 @section Scripts {
     <script>
 
         const IsAdmin = @(isAdmin.ToString().ToLower());
+        let currentMode = "future"; // gelecekle başlar
 
-        // ----------------- STATUS BADGE -----------------
+        // ---- STATUS Badge ----
         function getStatusBadge(status) {
             if (status === "Approved") return `<span class="badge bg-success">Approved</span>`;
             if (status === "Rejected") return `<span class="badge bg-danger">Rejected</span>`;
             return `<span class="badge bg-warning text-dark">Pending</span>`;
         }
 
-        // ----------------- VERİ YÜKLE -------------------
+        // ---- Verileri Getir ----
         function loadAppointments() {
 
             const query = {
+                mode: currentMode,
                 startDate: $("#StartDate").val(),
                 serviceId: $("#ServiceId").val(),
                 trainerId: $("#TrainerId").val(),
                 status: $("#Status").val(),
                 userId: IsAdmin ? $("#UserId").val() : null
+                
             };
 
             $("#tableBody").html("<tr><td colspan='7'>Yükleniyor...</td></tr>");
@@ -130,6 +148,7 @@
                     let adminButtons = IsAdmin ? `
                         <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-warning">Edit</a>
                         <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-danger">Delete</a>
+
                         <form method="post" action="/Appointments/Approve/${a.id}" style="display:inline;">
                             <button class="btn btn-sm btn-success ms-1">Onayla</button>
                         </form>
@@ -144,11 +163,8 @@
                             <td>${a.service}</td>
                             <td>${a.trainer}</td>
                             <td>${a.center}</td>
-
                             ${adminUserCol}
-
                             <td>${getStatusBadge(a.status)}</td>
-
                             <td>
                                 <a href="/Appointments/Details/${a.id}" class="btn btn-sm btn-info">Detay</a>
                                 ${adminButtons}
@@ -161,12 +177,30 @@
             });
         }
 
+        // ---- Filtre paneli aç/kapa ----
+        $("#ToggleFilters").on("click", function () {
+            $("#FilterPanel").toggle();
+            $(this).text($("#FilterPanel").is(":visible") ? "Filtreleri Gizle" : "Filtreleri Göster");
+        });
+
+        // ---- Tab seçimleri ----
+        $("#AppointmentTabs a").on("click", function (e) {
+            e.preventDefault();
+
+            $("#AppointmentTabs a").removeClass("active");
+            $(this).addClass("active");
+
+            currentMode = $(this).data("mode"); // "future" veya "past"
+            loadAppointments();
+        });
 
         $("#FilterBtn").on("click", loadAppointments);
+
         $(document).ready(loadAppointments);
 
     </script>
 }
+
 
 
 
