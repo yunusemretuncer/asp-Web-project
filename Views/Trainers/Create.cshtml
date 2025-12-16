@@ -1,79 +1,88 @@
 ﻿@model AspWebProject.Models.ViewModels.TrainerEditViewModel
 
-<h1>Create Trainer</h1>
+<h1 class="mb-4">Yeni Eğitmen Oluştur</h1>
 
-<form  asp-action="Create" method="post">
+<div class="card shadow-sm p-4">
+    <form asp-action="Create" method="post">
 
-    <!-- FullName -->
-    <div class="form-group mb-3">
-        <label asp-for="Trainer.FullName"></label>
-        <input asp-for="Trainer.FullName" class="form-control" />
-        <span asp-validation-for="Trainer.FullName" class="text-danger"></span>
-    </div>
+        <!-- Full Name -->
+        <div class="mb-3">
+            <label asp-for="Trainer.FullName" class="form-label fw-bold"></label>
+            <input asp-for="Trainer.FullName" class="form-control" placeholder="Eğitmen Adı" />
+            <span asp-validation-for="Trainer.FullName" class="text-danger"></span>
+        </div>
 
-    <!-- FitnessCenter -->
-    <div class="form-group mb-3">
-        <label asp-for="Trainer.FitnessCenterId">Fitness Center</label>
-        <select asp-for="Trainer.FitnessCenterId" id="FitnessCenterId" class="form-control" asp-items="ViewBag.FitnessCenterId">
-            <option value="">Bir salon seçiniz</option>
-        </select>
-        <span asp-validation-for="Trainer.FitnessCenterId" class="text-danger"></span>
-    </div>
+        <!-- Fitness Center -->
+        <div class="mb-3">
+            <label asp-for="Trainer.FitnessCenterId" class="form-label fw-bold">Fitness Center</label>
+            <select asp-for="Trainer.FitnessCenterId" id="FitnessCenterId"
+                    class="form-select" asp-items="ViewBag.FitnessCenterId">
+                <option value="">Bir salon seçiniz</option>
+            </select>
+            <span asp-validation-for="Trainer.FitnessCenterId" class="text-danger"></span>
+        </div>
 
-    <!-- Services -->
-    <h4 class="mt-4">Bu eğitmenin verebileceği hizmetler</h4>
+        <!-- Services -->
+        <h5 class="mt-4 mb-2 fw-bold">Verdiği Hizmetler</h5>
 
-    <div id="services-area">
-        <p>Salon seçiniz...</p>
-    </div>
+        <div id="services-area" class="p-3 bg-light border rounded">
+            <p class="text-muted m-0">Salon seçiniz...</p>
+        </div>
 
+        <!-- Availability Schedule -->
+        <h5 class="mt-4 mb-2 fw-bold">Çalışma Saatleri</h5>
 
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle bg-white">
+                <thead class="table-success text-center">
+                    <tr>
+                        <th>Gün</th>
+                        <th>Müsait</th>
+                        <th>Başlangıç</th>
+                        <th>Bitiş</th>
+                    </tr>
+                </thead>
+                <tbody>
 
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        var day = (DayOfWeek)(i + 1); // Monday–Friday
 
-    <div class="p-2">
+                        <tr>
+                            <td class="fw-bold">@day</td>
 
-        @for (int i = 0; i < 5; i++)
-        {
-            var day = (DayOfWeek)(i + 1); // Monday–Friday
+                            <!-- Enabled Checkbox -->
+                            <td class="text-center">
+                                <input type="checkbox" class="form-check-input"
+                                       name="Availabilities[@i].Enabled" />
+                                <input type="hidden" name="Availabilities[@i].Day"
+                                       value="@((int)day)" />
+                            </td>
 
-            <div class="d-flex align-items-center border-bottom py-2"">
+                            <!-- StartTime -->
+                            <td>
+                                <input type="time" name="Availabilities[@i].StartTime"
+                                       class="form-control form-control-sm" />
+                            </td>
 
-                <!-- Checkbox -->
-                <input type="checkbox"
-                       class="form-check-input me-2"
-                       name="Availabilities[@i].Enabled"
-                       value="true" />
+                            <!-- EndTime -->
+                            <td>
+                                <input type="time" name="Availabilities[@i].EndTime"
+                                       class="form-control form-control-sm" />
+                            </td>
+                        </tr>
+                    }
 
-                <!-- Gün adı -->
-                <label class="me-3 fw-bold" style="width:140px; font-size:0.9rem;">
-                    @day.ToString()
-                </label>
+                </tbody>
+            </table>
+        </div>
 
-                <input type="hidden" name="Availabilities[@i].Day" value="@((int)day)" />
+        <button type="submit" class="btn btn-success px-4 mt-3">
+            <i class="bi bi-check-circle"></i> Kaydet
+        </button>
 
-                <!-- Başlangıç -->
-                <div class="d-flex flex-column me-3">
-                    <label class="form-label m-0" style="font-size:0.75rem;">Başlangıç</label>
-                    <input type="time" class="form-control form-control-sm"
-                           style="width:120px;"
-                           name="Availabilities[@i].StartTime" />
-                </div>
-
-                <!-- Bitiş -->
-                <div class="d-flex flex-column">
-                    <label class="form-label m-0" style="font-size:0.75rem;">Bitiş</label>
-                    <input type="time" class="form-control form-control-sm"
-                           style="width:120px;"
-                           name="Availabilities[@i].EndTime" />
-                </div>
-
-            </div>
-        }
-    </div>
-
-
-    <button type="submit" class="btn btn-primary mt-3">Kaydet</button>
-</form>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -85,36 +94,37 @@
             const area = document.getElementById("services-area");
 
             if (!centerId) {
-                area.innerHTML = "<p>Salon seçiniz...</p>";
+                area.innerHTML = "<p class='text-muted'>Salon seçiniz...</p>";
                 return;
             }
 
-            // TrainersController içindeki GetServicesByCenter endpointi !!!
             fetch(`/Trainers/GetServicesByCenter?fitnessCenterId=${centerId}`)
                 .then(res => res.json())
                 .then(services => {
 
                     if (!services || services.length === 0) {
-                        area.innerHTML = "<p>Bu salonda hiç hizmet tanımlı değil.</p>";
+                        area.innerHTML = "<p class='text-muted'>Bu salonda hiç hizmet tanımlı değil.</p>";
                         return;
                     }
 
-                    let html = "<ul class='list-group'>";
+                    let html = `<div class="row">`;
+
                     services.forEach(s => {
                         html += `
-                            <li class="list-group-item">
-                                <input type="checkbox" name="SelectedServiceIds" value="${s.id}" />
-                                ${s.name}
-                            </li>
-                        `;
+                            <div class="col-md-4 mb-2">
+                                <div class="form-check border rounded p-2 bg-white shadow-sm">
+                                    <input class="form-check-input" type="checkbox"
+                                        name="SelectedServiceIds" value="${s.id}">
+                                    <label class="form-check-label">
+                                        ${s.name}
+                                    </label>
+                                </div>
+                            </div>`;
                     });
 
-                    html += "</ul>";
+                    html += `</div>`;
                     area.innerHTML = html;
                 });
         });
     </script>
-
 }
-
-

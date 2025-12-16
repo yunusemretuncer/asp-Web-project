@@ -4,45 +4,78 @@
     ViewData["Title"] = "Hizmetler";
 }
 
-<h2>Hizmetler</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Hizmetler</h2>
 
-<div class="row mb-3">
-
-    <div class="col-md-3">
-        <label>Fitness Center</label>
-        <select id="FitnessFilter" class="form-control">
-            <option value="0">Hepsi</option>
-            @foreach (var fc in ViewBag.FitnessCenters)
-            {
-                <option value="@fc.Id">@fc.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="col-md-2 mt-4">
-        <button id="FilterBtn" class="btn btn-primary">Filtrele</button>
-    </div>
-
+    <a class="btn btn-success" href="/Services/Create">
+        <i class="bi bi-plus-circle"></i> Yeni Hizmet Ekle
+    </a>
 </div>
 
-<table class="table table-bordered" id="ServiceTable">
-    <thead>
-        <tr>
-            <th>Hizmet</th>
-            <th>Süre</th>
-            <th>Ücret</th>
-            <th>Salon</th>
-            <th>İşlem</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="5">Veri bekleniyor...</td></tr>
-    </tbody>
-</table>
+<!-- === FİLTRE PANELİ AÇ/KAPA === -->
+<button id="ToggleFilters" class="btn btn-secondary mb-3">
+    Filtreleri Göster
+</button>
+
+<div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-4 bg-light shadow-sm">
+
+    <div class="row">
+
+        <!-- Fitness Center Filter -->
+        <div class="col-md-4">
+            <label class="fw-bold">Fitness Center</label>
+            <select id="FitnessFilter" class="form-control">
+                <option value="0">Hepsi</option>
+                @foreach (var fc in ViewBag.FitnessCenters)
+                {
+                    <option value="@fc.Id">@fc.Name</option>
+                }
+            </select>
+        </div>
+
+    </div>
+
+    <button id="FilterBtn" class="btn btn-success mt-3">
+        <i class="bi bi-funnel"></i> Filtrele
+    </button>
+</div>
+
+<!-- === HİZMETLER TABLOSU === -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0" id="ServiceTable">
+            <thead class="table-success">
+                <tr>
+                    <th>Hizmet</th>
+                    <th>Süre</th>
+                    <th>Ücret</th>
+                    <th>Salon</th>
+                    <th class="text-end">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5">Veri bekleniyor...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @section Scripts {
     <script>
+
+        // -------- FİLTRE PANELİ AÇ/KAPA --------
+        $("#ToggleFilters").on("click", function () {
+            $("#FilterPanel").toggle();
+            $(this).text(
+                $("#FilterPanel").is(":visible")
+                    ? "Filtreleri Gizle"
+                    : "Filtreleri Göster"
+            );
+        });
+
+        // -------- VERİ GETİR --------
         function loadServices() {
+
             let fcId = $("#FitnessFilter").val();
 
             $("#ServiceTable tbody").html("<tr><td colspan='5'>Yükleniyor...</td></tr>");
@@ -62,10 +95,19 @@
                                 <td>${s.duration} saat</td>
                                 <td>${s.price} ₺</td>
                                 <td>${s.fitnessCenter}</td>
-                                <td>
-                                    <a href="/Services/Edit/${s.id}">Düzenle</a> |
-                                    <a href="/Services/Details/${s.id}">Detay</a> |
-                                    <a href="/Services/Delete/${s.id}">Sil</a>
+
+                                <td class="text-end">
+                                    <a href="/Services/Edit/${s.id}" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
+                                    <a href="/Services/Details/${s.id}" class="btn btn-sm btn-outline-info me-1">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </a>
+
+                                    <a href="/Services/Delete/${s.id}" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
                                 </td>
                             </tr>`;
                     });
@@ -77,7 +119,8 @@
 
         $("#FilterBtn").click(loadServices);
 
-        // Sayfa ilk açıldığında tüm hizmetleri yükle
         loadServices();
     </script>
 }
+
+

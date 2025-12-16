@@ -1,101 +1,152 @@
 ﻿@model IEnumerable<AspWebProject.Models.Trainer>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Eğitmenler";
 }
 
-<h1>Index</h1>
+<h2 class="mb-4">Eğitmenler</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<div class="row mb-3">
-    <div class="col-3">
-        <label>Fitness Center</label>
-        <select id="FilterCenter" class="form-control">
-            <option value="">Hepsi</option>
-            @foreach (var fc in ViewBag.FitnessCenters)
-            {
-                <option value="@fc.Id">@fc.Name</option>
-            }
-        </select>
+<a asp-action="Create" class="btn btn-success mb-3">Yeni Eğitmen Ekle</a>
+
+<!-- === Filtreleri Göster/Gizle Butonu === -->
+<button id="ToggleFilters" class="btn btn-secondary mb-3">Filtreleri Göster</button>
+
+<!-- === FILTRE PANELİ === -->
+<div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-4 bg-light shadow-sm">
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <label class="fw-bold">Fitness Center</label>
+            <select id="FilterCenter" class="form-control">
+                <option value="">Hepsi</option>
+                @foreach (var fc in ViewBag.FitnessCenters)
+                {
+                    <option value="@fc.Id">@fc.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="fw-bold">Çalışma Günü</label>
+            <select id="FilterDay" class="form-control">
+                <option value="">Hepsi</option>
+                @foreach (DayOfWeek d in Enum.GetValues(typeof(DayOfWeek)))
+                {
+                    <option value="@((int)d)">@d</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="fw-bold">Hizmet</label>
+            <select id="FilterService" class="form-control">
+                <option value="">Hepsi</option>
+                @foreach (var s in ViewBag.Services)
+                {
+                    <option value="@s.Id">@s.Name</option>
+                }
+            </select>
+        </div>
+
     </div>
 
-    <div class="col-3">
-        <label>Çalışma Günü</label>
-        <select id="FilterDay" class="form-control">
-            <option value="">Hepsi</option>
-            @foreach (DayOfWeek d in Enum.GetValues(typeof(DayOfWeek)))
-            {
-                <option value="@((int)d)">@d</option>
-            }
-        </select>
-    </div>
+    <button id="FilterBtn" class="btn btn-primary mt-3">Filtrele</button>
 
-    <div class="col-3">
-        <label>Hizmet</label>
-        <select id="FilterService" class="form-control">
-            <option value="">Hepsi</option>
-            @foreach (var s in ViewBag.Services)
-            {
-                <option value="@s.Id">@s.Name</option>
-            }
-        </select>
-    </div>
 </div>
-<table class="table table-bordered" id="TrainerTable">
-    <thead>
+
+<!-- === EĞİTMEN TABLOSU === -->
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-success">
         <tr>
             <th>İsim</th>
             <th>Uzmanlık</th>
             <th>Salon</th>
-            <th>İşlemler</th>
+            <th style="width:180px;">İşlemler</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="TrainerTableBody">
+        <tr><td colspan="4">Veri yükleniyor...</td></tr>
+    </tbody>
 </table>
-
 
 
 @section Scripts {
     <script>
-                $(document).ready(function () {
-            loadFiltered(); // sayfa açılır açılmaz tabloyu doldur
+
+        // === Filtre panelini aç/kapa ===
+        $("#ToggleFilters").on("click", function () {
+            $("#FilterPanel").toggle();
+            $(this).text($("#FilterPanel").is(":visible")
+                ? "Filtreleri Gizle"
+                : "Filtreleri Göster");
         });
 
+        // === FILTRELI SONUÇLARI GETİR ===
         function loadFiltered() {
-            const center = $("#FilterCenter").val();
-            const day = $("#FilterDay").val();
-            const service = $("#FilterService").val();
 
-            $.get("/api/TrainersApi/filter", {
-                fitnessCenterId: center,
-                day: day,
-                serviceId: service
-            }, function (list) {
+            const query = {
+                fitnessCenterId: $("#FilterCenter").val(),
+                day: $("#FilterDay").val(),
+                serviceId: $("#FilterService").val()
+            };
+
+            $("#TrainerTableBody").html("<tr><td colspan='4'>Yükleniyor...</td></tr>");
+
+            $.get("/api/TrainersApi/filter", query, function (list) {
+
+                if (!list || list.length === 0) {
+                    $("#TrainerTableBody").html("<tr><td colspan='4'>Kayıt bulunamadı.</td></tr>");
+                    return;
+                }
 
                 let html = "";
+
                 list.forEach(t => {
                     html += `
                     <tr>
                         <td>${t.fullName}</td>
                         <td>${t.expertise}</td>
                         <td>${t.fitnessCenter}</td>
-                        <td>
-                            <a href="/Trainers/Edit/${t.id}">Edit</a> |
-                            <a href="/Trainers/Details/${t.id}">Details</a> |
-                            <a href="/Trainers/Delete/${t.id}">Delete</a>
-                       </td>
-                    </tr>`;
+                                        <td class="text-end align-middle">
+
+            <div class="btn-group" role="group">
+
+                <a href="/Trainers/Edit/${t.id}"
+                   class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+
+                <a href="/Trainers/Details/${t.id}"
+                   class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-info-circle"></i> Details
+                </a>
+
+                <a href="/Trainers/Delete/${t.id}"
+                   class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+
+            </div>
+
+        </td>
+
+                    </tr>
+                    `;
                 });
 
-                $("#TrainerTable tbody").html(html);
+                $("#TrainerTableBody").html(html);
             });
         }
 
-        $("#FilterCenter").change(loadFiltered);
-        $("#FilterDay").change(loadFiltered);
-        $("#FilterService").change(loadFiltered);
+        // Sayfa açılır açılmaz yükle
+        $(document).ready(loadFiltered);
+
+        // Filtre butonları
+        $("#FilterBtn").on("click", loadFiltered);
+        $("#FilterCenter").on("change", loadFiltered);
+        $("#FilterDay").on("change", loadFiltered);
+        $("#FilterService").on("change", loadFiltered);
 
     </script>
 }

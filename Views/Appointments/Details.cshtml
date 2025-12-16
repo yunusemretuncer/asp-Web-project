@@ -1,43 +1,47 @@
 ﻿@model AspWebProject.Models.Appointment
 
-@{
-    ViewData["Title"] = "Details";
-}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Randevu Detayları</h4>
+        </div>
 
-<h1>Details</h1>
+        <div class="card-body">
 
-<div>
-    <h4>Appointment</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trainer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trainer.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Service)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Service.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        
-    </dl>
+            <dl class="row">
+
+                <dt class="col-sm-3 fw-bold">Kullanıcı</dt>
+                <dd class="col-sm-9">@Model.User?.FullName (@Model.User?.Email)</dd>
+
+                <dt class="col-sm-3 fw-bold">Eğitmen</dt>
+                <dd class="col-sm-9">@Model.Trainer?.FullName</dd>
+
+                <dt class="col-sm-3 fw-bold">Hizmet</dt>
+                <dd class="col-sm-9">@Model.Service?.Name</dd>
+
+                <dt class="col-sm-3 fw-bold">Tarih</dt>
+                <dd class="col-sm-9">@Model.Date.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3 fw-bold">Durum</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Status == AppointmentStatus.Approved)
+                    {
+                        <span class="badge bg-success">Approved</span>
+                    }
+                    else if (Model.Status == AppointmentStatus.Rejected)
+                    {
+                        <span class="badge bg-danger">Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                </dd>
+
+            </dl>
+
+            <a asp-action="Index" class="btn btn-secondary mt-3">← Listeye Dön</a>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+

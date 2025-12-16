@@ -4,58 +4,69 @@
     ViewData["Title"] = "Trainer Details";
 }
 
-<h2>Trainer Details</h2>
-<hr />
+<h2 class="mb-4">
+    <i class="bi bi-person-badge"></i> Eğitmen Detayları
+</h2>
 
-<div class="card p-4 shadow-sm">
+<div class="card shadow-sm p-4">
 
-    <h3>@Model.FullName</h3>
-    <p class="text-muted">Expertise: <strong>@Model.Expertise</strong></p>
+    <h3 class="mb-1">@Model.FullName</h3>
+    <p class="text-muted mb-3">
+        Uzmanlık: <strong>@Model.Expertise</strong>
+    </p>
 
     <p><strong>Fitness Center:</strong> @Model.FitnessCenter?.Name</p>
 
     <hr />
 
-    <h4>Services Provided</h4>
+    <h4 class="mb-2">Verdiği Hizmetler</h4>
 
     @if (Model.TrainerServices.Any())
     {
-        <ul>
+        <ul class="list-group mb-3">
             @foreach (var s in Model.TrainerServices)
             {
-                <li>@s.Service.Name</li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>No services assigned.</p>
-    }
-
-    <hr />
-
-    <h4>Weekly Availability</h4>
-
-    @if (Model.Availabilities.Any())
-    {
-        <ul>
-            @foreach (var a in Model.Availabilities)
-            {
-                <li>
-                    <strong>@a.Day:</strong>
-                    @a.StartTime.ToString(@"hh\:mm") - @a.EndTime.ToString(@"hh\:mm")
+                <li class="list-group-item">
+                    <i class="bi bi-dot"></i> @s.Service.Name
                 </li>
             }
         </ul>
     }
     else
     {
-        <p>No availability defined.</p>
+        <p class="text-muted">Bu eğitmene hiçbir hizmet atanmadı.</p>
     }
 
     <hr />
 
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <h4 class="mb-2">Haftalık Çalışma Saatleri</h4>
+
+    @if (Model.Availabilities.Any())
+    {
+        <ul class="list-group mb-3">
+            @foreach (var a in Model.Availabilities.OrderBy(x => x.Day))
+            {
+                <li class="list-group-item">
+                    <strong>@a.Day:</strong>
+                    @a.StartTime.ToString(@"hh\:mm") — @a.EndTime.ToString(@"hh\:mm")
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="text-muted">Çalışma saatleri tanımlanmamış.</p>
+    }
+
+    <div class="mt-3 d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+    </div>
+
 </div>
 

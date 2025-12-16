@@ -1,42 +1,29 @@
 ﻿@model AspWebProject.Models.Service
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Hizmet Detayı";
 }
 
-<h1>Details</h1>
+<h2 class="mb-4">Hizmet Detayı</h2>
 
-<div>
-    <h4>Service</h4>
+<div class="card shadow p-4">
+
+    <h4 class="fw-bold">@Model.Name</h4>
+
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Duration)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Duration)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FitnessCenter)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FitnessCenter.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <p><strong>Süre:</strong> @Model.Duration saat</p>
+    <p><strong>Ücret:</strong> @Model.Price ₺</p>
+    <p><strong>Fitness Center:</strong> @Model.FitnessCenter?.Name</p>
+
+    <hr />
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+        <i class="bi bi-pencil-square"></i> Düzenle
+    </a>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Geri
+    </a>
+
 </div>

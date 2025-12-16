@@ -3,121 +3,141 @@
     bool isAdmin = User.IsInRole("Admin");
 }
 
-<h2 class="mb-4">Randevular</h2>
-<a href="/Appointments/Create">Yeni Randevu Oluştur</a>
-<!-- === FİLTRELERİ GÖSTER / GİZLE === -->
-<button id="ToggleFilters" class="btn btn-secondary mb-3">
-    Filtreleri Göster
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Randevular</h2>
+
+    @if (!isAdmin)
+    {
+        <a class="btn btn-success shadow-sm" href="/Appointments/Create">
+            <i class="bi bi-plus-circle"></i> Yeni Randevu Oluştur
+        </a>
+    }
+</div>
+
+<!-- === FİLTRE GÖSTER/GİZLE === -->
+<button id="ToggleFilters" class="btn btn-outline-secondary mb-3 shadow-sm">
+    <i class="bi bi-funnel"></i> Filtreleri Göster
 </button>
 
-<div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-3 bg-light">
+<!-- === FİLTRE PANELİ === -->
+<div id="FilterPanel" style="display:none;" class="card shadow-sm mb-4">
+    <div class="card-body bg-light rounded">
 
-    <div class="row">
+        <div class="row g-3">
 
-        <div class="col-md-3">
-            <label>Başlangıç Tarihi</label>
-            <input id="StartDate" type="date" class="form-control" />
-        </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Başlangıç Tarihi</label>
+                <input id="StartDate" type="date" class="form-control shadow-sm" />
+            </div>
 
-        <div class="col-md-3">
-            <label>Hizmet</label>
-            <select id="ServiceId" class="form-control">
-                <option value="0">Hepsi</option>
-                @foreach (var s in ViewBag.Services)
-                {
-                    <option value="@s.Id">@s.Name</option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label>Eğitmen</label>
-            <select id="TrainerId" class="form-control">
-                <option value="0">Hepsi</option>
-                @foreach (var t in ViewBag.Trainers)
-                {
-                    <option value="@t.Id">@t.FullName</option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label>Status</label>
-            <select id="Status" class="form-control">
-                <option value="">Hepsi</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-        </div>
-
-        @if (isAdmin)
-        {
-            <div class="col-md-3 mt-3">
-                <label>Kullanıcı</label>
-                <select id="UserId" class="form-control">
-                    <option value="all">Hepsi</option>
-                    @foreach (var u in ViewBag.Users)
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Hizmet</label>
+                <select id="ServiceId" class="form-control shadow-sm">
+                    <option value="0">Hepsi</option>
+                    @foreach (var s in ViewBag.Services)
                     {
-                        <option value="@u.Id">@u.UserName</option>
+                        <option value="@s.Id">@s.Name</option>
                     }
                 </select>
             </div>
-        }
 
-    </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Eğitmen</label>
+                <select id="TrainerId" class="form-control shadow-sm">
+                    <option value="0">Hepsi</option>
+                    @foreach (var t in ViewBag.Trainers)
+                    {
+                        <option value="@t.Id">@t.FullName</option>
+                    }
+                </select>
+            </div>
 
-    <button id="FilterBtn" class="btn btn-primary mt-3">Filtrele</button>
-</div>
-
-
-<!-- === TABS: GELECEK / GEÇMİŞ === -->
-<ul class="nav nav-tabs mb-3" id="AppointmentTabs">
-    <li class="nav-item">
-        <a class="nav-link active" data-mode="future" href="#">Gelecek Randevular</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-mode="past" href="#">Geçmiş Randevular</a>
-    </li>
-</ul>
-
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Tarih</th>
-            <th>Hizmet</th>
-            <th>Eğitmen</th>
-            <th>Salon</th>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Durum</label>
+                <select id="Status" class="form-control shadow-sm">
+                    <option value="">Hepsi</option>
+                    <option value="Pending">Bekliyor</option>
+                    <option value="Approved">Onaylandı</option>
+                    <option value="Rejected">Reddedildi</option>
+                </select>
+            </div>
 
             @if (isAdmin)
             {
-                <th>Kullanıcı</th>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Kullanıcı</label>
+                    <select id="UserId" class="form-control shadow-sm">
+                        <option value="all">Hepsi</option>
+                        @foreach (var u in ViewBag.Users)
+                        {
+                            <option value="@u.Id">@u.UserName</option>
+                        }
+                    </select>
+                </div>
             }
+        </div>
 
-            <th>Status</th>
-            <th>İşlem</th>
-        </tr>
-    </thead>
-    <tbody id="tableBody">
-        <tr><td colspan="7">Veri bekleniyor...</td></tr>
-    </tbody>
-</table>
+        <button id="FilterBtn" class="btn btn-primary mt-3 shadow-sm">
+            <i class="bi bi-search"></i> Filtrele
+        </button>
+    </div>
+</div>
+
+<!-- === GEÇMİŞ / GELECEK TABS === -->
+<ul class="nav nav-tabs mb-4" id="AppointmentTabs">
+    <li class="nav-item">
+        <a class="nav-link active fw-semibold" data-mode="future" href="#">
+            <i class="bi bi-calendar-event"></i> Gelecek Randevular
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold" data-mode="past" href="#">
+            <i class="bi bi-clock-history"></i> Geçmiş Randevular
+        </a>
+    </li>
+</ul>
+
+<!-- === TABLO === -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-bordered m-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tarih</th>
+                    <th>Hizmet</th>
+                    <th>Eğitmen</th>
+                    <th>Salon</th>
+
+                    @if (isAdmin)
+                    {
+                        <th>Kullanıcı</th>
+                    }
+
+                    <th>Status</th>
+                    <th style="width:180px;">İşlem</th>
+                </tr>
+            </thead>
+
+            <tbody id="tableBody">
+                <tr><td colspan="7" class="text-center p-4 text-muted">Veri bekleniyor...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @section Scripts {
     <script>
 
         const IsAdmin = @(isAdmin.ToString().ToLower());
-        let currentMode = "future"; // gelecekle başlar
+        let currentMode = "future";
 
-        // ---- STATUS Badge ----
         function getStatusBadge(status) {
-            if (status === "Approved") return `<span class="badge bg-success">Approved</span>`;
-            if (status === "Rejected") return `<span class="badge bg-danger">Rejected</span>`;
-            return `<span class="badge bg-warning text-dark">Pending</span>`;
+            if (status === "Approved") return `<span class="badge bg-success">Onaylandı</span>`;
+            if (status === "Rejected") return `<span class="badge bg-danger">Reddedildi</span>`;
+            return `<span class="badge bg-warning text-dark">Bekliyor</span>`;
         }
 
-        // ---- Verileri Getir ----
         function loadAppointments() {
 
             const query = {
@@ -127,15 +147,14 @@
                 trainerId: $("#TrainerId").val(),
                 status: $("#Status").val(),
                 userId: IsAdmin ? $("#UserId").val() : null
-                
             };
 
-            $("#tableBody").html("<tr><td colspan='7'>Yükleniyor...</td></tr>");
+            $("#tableBody").html("<tr><td colspan='7' class='text-center p-4'>Yükleniyor...</td></tr>");
 
             $.get("/api/AppointmentsApi/filter", query, function (data) {
 
                 if (!data || data.length === 0) {
-                    $("#tableBody").html("<tr><td colspan='7'>Kayıt bulunamadı.</td></tr>");
+                    $("#tableBody").html("<tr><td colspan='7' class='text-center p-4'>Kayıt bulunamadı.</td></tr>");
                     return;
                 }
 
@@ -143,17 +162,16 @@
 
                 data.forEach(a => {
 
-                    let adminUserCol = IsAdmin ? `<td>${a.user}</td>` : "";
+                    let userCell = IsAdmin ? `<td>${a.user}</td>` : "";
 
-                    let adminButtons = IsAdmin ? `
-                        <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-danger">Delete</a>
-
-                        <form method="post" action="/Appointments/Approve/${a.id}" style="display:inline;">
-                            <button class="btn btn-sm btn-success ms-1">Onayla</button>
+                    let adminActions = IsAdmin ? `
+                        <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-outline-warning">Edit</a>
+                        <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        <form action="/Appointments/Approve/${a.id}" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-success">✔</button>
                         </form>
-                        <form method="post" action="/Appointments/Reject/${a.id}" style="display:inline;">
-                            <button class="btn btn-sm btn-danger ms-1">Reddet</button>
+                        <form action="/Appointments/Reject/${a.id}" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-danger">✖</button>
                         </form>
                     ` : "";
 
@@ -163,11 +181,11 @@
                             <td>${a.service}</td>
                             <td>${a.trainer}</td>
                             <td>${a.center}</td>
-                            ${adminUserCol}
+                            ${userCell}
                             <td>${getStatusBadge(a.status)}</td>
                             <td>
-                                <a href="/Appointments/Details/${a.id}" class="btn btn-sm btn-info">Detay</a>
-                                ${adminButtons}
+                                <a href="/Appointments/Details/${a.id}" class="btn btn-sm btn-info text-white">Detay</a>
+                                ${adminActions}
                             </td>
                         </tr>
                     `;
@@ -177,20 +195,20 @@
             });
         }
 
-        // ---- Filtre paneli aç/kapa ----
+        // Filtre Aç/Kapa
         $("#ToggleFilters").on("click", function () {
-            $("#FilterPanel").toggle();
-            $(this).text($("#FilterPanel").is(":visible") ? "Filtreleri Gizle" : "Filtreleri Göster");
+            $("#FilterPanel").slideToggle(250);
+            $(this).text($("#FilterPanel").is(":visible")
+                ? "Filtreleri Gizle"
+                : "Filtreleri Göster");
         });
 
-        // ---- Tab seçimleri ----
+        // TAB Değişimi
         $("#AppointmentTabs a").on("click", function (e) {
             e.preventDefault();
-
             $("#AppointmentTabs a").removeClass("active");
             $(this).addClass("active");
-
-            currentMode = $(this).data("mode"); // "future" veya "past"
+            currentMode = $(this).data("mode");
             loadAppointments();
         });
 
@@ -200,9 +218,6 @@
 
     </script>
 }
-
-
-
 
 
 

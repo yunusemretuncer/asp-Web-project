@@ -4,22 +4,31 @@
     ViewData["Title"] = "Delete Trainer";
 }
 
-<h2>Delete Trainer</h2>
-<hr />
+<h2 class="mb-3 text-danger">
+    <i class="bi bi-trash"></i> Eğitmeni Sil
+</h2>
 
-<div class="alert alert-danger">
-    <strong>@Model.FullName</strong> adlı eğitmeni silmek istediğinize emin misiniz?
+<div class="card border-danger shadow-sm mb-4">
+    <div class="card-body">
+
+        <div class="alert alert-danger">
+            <strong>@Model.FullName</strong> adlı eğitmeni silmek istediğinize emin misiniz?
+        </div>
+
+        <p><strong>Fitness Center:</strong> @Model.FitnessCenter?.Name</p>
+        <p><strong>Uzmanlık:</strong> @Model.Expertise</p>
+
+    </div>
 </div>
 
-<div class="mb-3">
-    <strong>Fitness Center:</strong> @Model.FitnessCenter?.Name <br />
-    <strong>Expertise:</strong> @Model.Expertise <br />
-</div>
-
-<form asp-action="Delete" method="post">
+<form asp-action="Delete" method="post" class="d-flex gap-2">
     <input type="hidden" asp-for="Id" />
 
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
-</form>
+    <button type="submit" class="btn btn-danger px-4">
+        <i class="bi bi-trash-fill"></i> Sil
+    </button>
 
+    <a asp-action="Index" class="btn btn-secondary px-4">
+        <i class="bi bi-arrow-left"></i> Geri
+    </a>
+</form>

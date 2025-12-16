@@ -1,33 +1,45 @@
 ﻿@model AspWebProject.Models.FitnessCenter
 
-@{
-    ViewData["Title"] = "Details";
-}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
 
-<h1>Details</h1>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Fitness Center Detayları
+                </h4>
+            </div>
 
-<div>
-    <h4>Fitness Center</h4>
-    <hr />
+            <div class="card-body">
 
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+                <dl class="row">
 
-        <dt class="col-sm-2">
-            Working Hours
-        </dt>
-        <dd class="col-sm-10">
-            @Model.OpenTime.ToString(@"hh\:mm") - @Model.CloseTime.ToString(@"hh\:mm")
-        </dd>
-    </dl>
+                    <dt class="col-sm-4 fw-bold">Adı</dt>
+                    <dd class="col-sm-8">@Model.Name</dd>
+
+                    <dt class="col-sm-4 fw-bold">Çalışma Saatleri</dt>
+                    <dd class="col-sm-8">
+                        @Model.OpenTime.ToString(@"hh\:mm") - @Model.CloseTime.ToString(@"hh\:mm")
+                    </dd>
+
+                </dl>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="bi bi-pencil-square"></i> Düzenle
+                    </a>
+
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+

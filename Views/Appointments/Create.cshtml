@@ -1,59 +1,74 @@
 ﻿@model Appointment
 
-<h2>Randevu Oluştur</h2>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="bi bi-calendar-plus"></i> Randevu Oluştur</h4>
+        </div>
 
-<form asp-action="Create">
+        <div class="card-body">
 
-    <!-- Fitness Center -->
-    <div class="form-group">
-        <label>Fitness Center</label>
-        <select id="FitnessCenterId" name="FitnessCenterId"
-                class="form-control" asp-items="ViewBag.FitnessCenters">
-            <option value="">Seçiniz...</option>
-        </select>
-        <span asp-validation-for="FitnessCenterId" class="text-danger"></span>
+            <form asp-action="Create">
+
+                <!-- FITNESS CENTER -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Fitness Center</label>
+                    <select id="FitnessCenterId" name="FitnessCenterId"
+                            class="form-select" asp-items="ViewBag.FitnessCenters">
+                        <option value="">Seçiniz...</option>
+                    </select>
+                    <span asp-validation-for="FitnessCenterId" class="text-danger"></span>
+                </div>
+
+                <!-- SERVICE -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Hizmet (Service)</label>
+                    <select id="ServiceId" name="ServiceId" class="form-select">
+                        <option value="">Önce salon seçiniz...</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+
+                <!-- TRAINER -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Eğitmen (Trainer)</label>
+                    <select id="TrainerId" name="TrainerId" class="form-select">
+                        <option value="">Önce hizmet seçiniz...</option>
+                    </select>
+                    <span asp-validation-for="TrainerId" class="text-danger"></span>
+                </div>
+
+                <!-- DATE -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tarih</label>
+                    <input id="AppointmentDate" type="date" name="Date"
+                           class="form-control" required />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <!-- HOUR -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Saat</label>
+                    <select id="HourDropdown" name="HourString"
+                            class="form-select" required>
+                        <option value="">Önce tarih seçiniz...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-check-circle"></i> Randevuyu Kaydet
+                </button>
+
+            </form>
+
+        </div>
     </div>
-
-    <!-- Service -->
-    <div class="form-group mt-3">
-        <label>Hizmet (Service)</label>
-        <select id="ServiceId" name="ServiceId" class="form-control">
-            <option value="">Önce salon seçiniz...</option>
-        </select>
-        <span asp-validation-for="ServiceId" class="text-danger"></span>
-    </div>
-
-    <!-- Trainer -->
-    <div class="form-group mt-3">
-        <label>Eğitmen (Trainer)</label>
-        <select id="TrainerId" name="TrainerId" class="form-control">
-            <option value="">Önce hizmet seçiniz...</option>
-        </select>
-        <span asp-validation-for="TrainerId" class="text-danger"></span>
-    </div>
-
-    <!-- Date -->
-    <div class="form-group mt-3">
-        <label>Tarih</label>
-        <input id="AppointmentDate" type="date" name="Date"
-               class="form-control" required />
-        <span asp-validation-for="Date" class="text-danger"></span>
-    </div>
-
-    <!-- Hour -->
-    <div class="form-group mt-3">
-        <label>Saat</label>
-        <select id="HourDropdown" name="HourString" class="form-control" required>
-            <option value="">Önce tarih seçiniz...</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Randevu Oluştur</button>
-</form>
+</div>
 
 @section Scripts {
     <script>
-        // --- 1) Fitness Center → Service ---
+
+        // ============ 1) Fitness Center → Service ============
         $("#FitnessCenterId").change(function () {
             const id = $(this).val();
 
@@ -68,9 +83,10 @@
             });
         });
 
-        // --- 2) Service → Trainer ---
+        // ============ 2) Service → Trainer ============
         $("#ServiceId").change(function () {
             const id = $(this).val();
+
             $("#TrainerId").html('<option>Yükleniyor...</option>');
             $("#HourDropdown").html('<option>Önce tarih seçiniz...</option>');
 
@@ -81,25 +97,17 @@
             });
         });
 
-        // --- 3) Date seçilince saatleri getir ---
+        // ============ 3) Date seçildi → Uygun saatleri getir ============
         $("#AppointmentDate").change(function () {
 
-            console.log("DATE CHANGE WORKING!");
-
             const dateVal = $(this).val();
-            console.log("VAL = " + dateVal);
-
             const trainerId = $("#TrainerId").val();
             const serviceId = $("#ServiceId").val();
 
             if (!trainerId || !serviceId) {
-                console.log("Trainer veya Service seçili değil!");
                 $("#HourDropdown").html('<option>Önce eğitmen seçiniz...</option>');
                 return;
             }
-
-            console.log("Request gönderiliyor: ");
-            console.log(`/Appointments/GetAvailableHours?trainerId=${trainerId}&serviceId=${serviceId}&date=${dateVal}`);
 
             $.get(`/Appointments/GetAvailableHours?trainerId=${trainerId}&serviceId=${serviceId}&date=${dateVal}`,
                 function (hours) {
@@ -114,5 +122,7 @@
                     $("#HourDropdown").html(html);
                 });
         });
+
     </script>
 }
+
