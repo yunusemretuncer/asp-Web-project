@@ -1,8 +1,76 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["FullScreen"] = true;
+    
+    bool isLoggedIn = User.Identity.IsAuthenticated;
+    string username = User.Identity.Name;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .hero {
+        position: relative;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        height: 100vh;
+        background-image: url('/images/cleverfit6.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+        /* Siyah yarı saydam filtre */
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(2px);
+        }
+
+    /* Ortadaki yazı */
+    .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+        z-index: 2;
+    }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 600;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-top: 15px;
+        }
+
+    /* Butonlar */
+    .hero-btn {
+        margin-top: 25px;
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-content">
+        @if (isLoggedIn)
+        {
+            <h1>Hoşgeldiniz @username 👋</h1>
+            <p>Sağlığınız ve spor performansınız için en iyi çözümleri sunuyoruz.</p>
+        }
+        else
+        {
+            <h1>Hoşgeldiniz</h1>
+            <p>Yapay zeka destekli programlarımızdan faydalanmak için hemen kayıt olun!</p>
+
+            <div class="hero-btn">
+                <a class="btn btn-primary btn-lg me-2" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
+                <a class="btn btn-outline-light btn-lg" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
+            </div>
+        }
+    </div>
 </div>

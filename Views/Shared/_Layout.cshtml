@@ -103,7 +103,7 @@
             <div class="container-fluid">
 
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    AspWebProject
+                    XFit
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -177,18 +177,21 @@
     </header>
 
 
-    <!-- PAGE CONTENT -->
-    <div class="container pb-4">
+    @if (ViewData["FullScreen"] as bool? == true)
+    {
         @RenderBody()
-    </div>
-
-
-    <!-- FOOTER -->
-    <footer class="border-top footer text-muted mt-4 py-3">
-        <div class="container text-center">
-            &copy; 2025 - AspWebProject
+    }
+    else
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    }
+
+
+    
 
 
     <!-- JS -->
