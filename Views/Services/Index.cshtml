@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<AspWebProject.Models.Service>
-
 @{
     ViewData["Title"] = "Hizmetler";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Hizmetler</h2>
 
-    <a class="btn btn-success" href="/Services/Create">
-        <i class="bi bi-plus-circle"></i> Yeni Hizmet Ekle
-    </a>
+    @if (isAdmin)
+    {
+        <a class="btn btn-success" href="/Services/Create">
+            <i class="bi bi-plus-circle"></i> Yeni Hizmet Ekle
+        </a>
+    }
 </div>
 
 <!-- === FİLTRE PANELİ AÇ/KAPA === -->
@@ -18,10 +21,7 @@
 </button>
 
 <div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-4 bg-light shadow-sm">
-
     <div class="row">
-
-        <!-- Fitness Center Filter -->
         <div class="col-md-4">
             <label class="fw-bold">Fitness Center</label>
             <select id="FitnessFilter" class="form-control">
@@ -32,7 +32,6 @@
                 }
             </select>
         </div>
-
     </div>
 
     <button id="FilterBtn" class="btn btn-success mt-3">
@@ -40,7 +39,6 @@
     </button>
 </div>
 
-<!-- === HİZMETLER TABLOSU === -->
 <div class="card shadow-sm">
     <div class="card-body p-0">
         <table class="table table-hover mb-0" id="ServiceTable">
@@ -63,20 +61,17 @@
 @section Scripts {
     <script>
 
-        // -------- FİLTRE PANELİ AÇ/KAPA --------
         $("#ToggleFilters").on("click", function () {
             $("#FilterPanel").toggle();
-            $(this).text(
-                $("#FilterPanel").is(":visible")
-                    ? "Filtreleri Gizle"
-                    : "Filtreleri Göster"
-            );
+            $(this).text($("#FilterPanel").is(":visible")
+                ? "Filtreleri Gizle"
+                : "Filtreleri Göster");
         });
 
-        // -------- VERİ GETİR --------
         function loadServices() {
 
             let fcId = $("#FitnessFilter").val();
+            let isAdmin = @isAdmin.ToString().ToLower();
 
             $("#ServiceTable tbody").html("<tr><td colspan='5'>Yükleniyor...</td></tr>");
 
@@ -97,17 +92,19 @@
                                 <td>${s.fitnessCenter}</td>
 
                                 <td class="text-end">
+                                    ${isAdmin ? `
                                     <a href="/Services/Edit/${s.id}" class="btn btn-sm btn-outline-primary me-1">
                                         <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
+                                    </a>` : ""}
 
                                     <a href="/Services/Details/${s.id}" class="btn btn-sm btn-outline-info me-1">
                                         <i class="bi bi-info-circle"></i> Details
                                     </a>
 
+                                    ${isAdmin ? `
                                     <a href="/Services/Delete/${s.id}" class="btn btn-sm btn-outline-danger">
                                         <i class="bi bi-trash"></i> Delete
-                                    </a>
+                                    </a>` : ""}
                                 </td>
                             </tr>`;
                     });
@@ -118,9 +115,6 @@
         }
 
         $("#FilterBtn").click(loadServices);
-
         loadServices();
     </script>
 }
-
-

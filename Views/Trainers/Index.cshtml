@@ -2,16 +2,18 @@
 
 @{
     ViewData["Title"] = "Eğitmenler";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <h2 class="mb-4">Eğitmenler</h2>
 
-<a asp-action="Create" class="btn btn-success mb-3">Yeni Eğitmen Ekle</a>
+@if (isAdmin)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">Yeni Eğitmen Ekle</a>
+}
 
-<!-- === Filtreleri Göster/Gizle Butonu === -->
 <button id="ToggleFilters" class="btn btn-secondary mb-3">Filtreleri Göster</button>
 
-<!-- === FILTRE PANELİ === -->
 <div id="FilterPanel" style="display:none;" class="border rounded p-3 mb-4 bg-light shadow-sm">
 
     <div class="row g-3">
@@ -55,14 +57,13 @@
 
 </div>
 
-<!-- === EĞİTMEN TABLOSU === -->
 <table class="table table-bordered table-striped shadow-sm">
     <thead class="table-success">
         <tr>
             <th>İsim</th>
             <th>Uzmanlık</th>
             <th>Salon</th>
-            <th style="width:180px;">İşlemler</th>
+            <th style="width:200px;">İşlemler</th>
         </tr>
     </thead>
     <tbody id="TrainerTableBody">
@@ -70,11 +71,9 @@
     </tbody>
 </table>
 
-
 @section Scripts {
     <script>
 
-        // === Filtre panelini aç/kapa ===
         $("#ToggleFilters").on("click", function () {
             $("#FilterPanel").toggle();
             $(this).text($("#FilterPanel").is(":visible")
@@ -82,7 +81,6 @@
                 : "Filtreleri Göster");
         });
 
-        // === FILTRELI SONUÇLARI GETİR ===
         function loadFiltered() {
 
             const query = {
@@ -90,6 +88,8 @@
                 day: $("#FilterDay").val(),
                 serviceId: $("#FilterService").val()
             };
+
+            let isAdmin = @isAdmin.ToString().ToLower();
 
             $("#TrainerTableBody").html("<tr><td colspan='4'>Yükleniyor...</td></tr>");
 
@@ -104,34 +104,27 @@
 
                 list.forEach(t => {
                     html += `
-                    <tr>
-                        <td>${t.fullName}</td>
-                        <td>${t.expertise}</td>
-                        <td>${t.fitnessCenter}</td>
-                                        <td class="text-end align-middle">
+                        <tr>
+                            <td>${t.fullName}</td>
+                            <td>${t.expertise}</td>
+                            <td>${t.fitnessCenter}</td>
 
-            <div class="btn-group" role="group">
+                            <td class="text-end">
+                                ${isAdmin ? `
+                                <a href="/Trainers/Edit/${t.id}" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>` : ""}
 
-                <a href="/Trainers/Edit/${t.id}"
-                   class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-pencil-square"></i> Edit
-                </a>
+                                <a href="/Trainers/Details/${t.id}" class="btn btn-sm btn-outline-info me-1">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
 
-                <a href="/Trainers/Details/${t.id}"
-                   class="btn btn-sm btn-outline-info">
-                    <i class="bi bi-info-circle"></i> Details
-                </a>
-
-                <a href="/Trainers/Delete/${t.id}"
-                   class="btn btn-sm btn-outline-danger">
-                    <i class="bi bi-trash"></i> Delete
-                </a>
-
-            </div>
-
-        </td>
-
-                    </tr>
+                                ${isAdmin ? `
+                                <a href="/Trainers/Delete/${t.id}" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>` : ""}
+                            </td>
+                        </tr>
                     `;
                 });
 
@@ -139,10 +132,8 @@
             });
         }
 
-        // Sayfa açılır açılmaz yükle
         $(document).ready(loadFiltered);
 
-        // Filtre butonları
         $("#FilterBtn").on("click", loadFiltered);
         $("#FilterCenter").on("change", loadFiltered);
         $("#FilterDay").on("change", loadFiltered);
