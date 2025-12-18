@@ -164,16 +164,20 @@
 
                     let userCell = IsAdmin ? `<td>${a.user}</td>` : "";
 
-                    let adminActions = IsAdmin ? `
-                        <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-outline-warning">Edit</a>
-                        <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        <form action="/Appointments/Approve/${a.id}" method="post" class="d-inline">
-                            <button class="btn btn-sm btn-success">✔</button>
-                        </form>
-                        <form action="/Appointments/Reject/${a.id}" method="post" class="d-inline">
-                            <button class="btn btn-sm btn-danger">✖</button>
-                        </form>
-                    ` : "";
+                           let deleteButton = `
+            <a href="/Appointments/Delete/${a.id}" class="btn btn-sm btn-outline-danger">Delete</a>
+        `;
+
+        let adminActions = IsAdmin ? `
+            <a href="/Appointments/Edit/${a.id}" class="btn btn-sm btn-outline-warning">Edit</a>
+            <form action="/Appointments/Approve/${a.id}" method="post" class="d-inline">
+                <button class="btn btn-sm btn-success">✔</button>
+            </form>
+            <form action="/Appointments/Reject/${a.id}" method="post" class="d-inline">
+                <button class="btn btn-sm btn-danger">✖</button>
+            </form>
+        ` : "";
+
 
                     html += `
                         <tr>
@@ -186,6 +190,7 @@
                             <td>
                                 <a href="/Appointments/Details/${a.id}" class="btn btn-sm btn-info text-white">Detay</a>
                                 ${adminActions}
+                                ${deleteButton}
                             </td>
                         </tr>
                     `;
