@@ -50,6 +50,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Groq": {
+              "target": "Package",
+              "version": "[0.0.0-dev.6, )"
+            },
+            "GroqNet": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.22, )"
@@ -79,6 +87,10 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.22, )"
+            },
+            "OpenAI": {
+              "target": "Package",
+              "version": "[2.8.0, )"
             }
           },
           "imports": [

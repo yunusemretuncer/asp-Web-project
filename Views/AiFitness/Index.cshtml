@@ -1,0 +1,40 @@
+﻿@model FitnessRequestModel?
+
+<h2>Yapay Zeka Fitness Önerisi</h2>
+
+<form asp-action="Index" asp-controller="AiFitness" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    <div class="mb-2">
+        <label asp-for="Height" class="form-label">Boy (cm)</label>
+        <input asp-for="Height" type="number" class="form-control" />
+        <span asp-validation-for="Height" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="Weight" class="form-label">Kilo (kg)</label>
+        <input asp-for="Weight" type="number" class="form-control" />
+        <span asp-validation-for="Weight" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="BodyType" class="form-label">Vücut Tipi</label>
+        <select asp-for="BodyType" class="form-control">
+            <option value="">Seçiniz...</option>
+            <option value="Ectomorph">Ectomorph</option>
+            <option value="Mesomorph">Mesomorph</option>
+            <option value="Endomorph">Endomorph</option>
+        </select>
+        <span asp-validation-for="BodyType" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100 mt-3">Öneri Al</button>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model?.Answer))
+{
+    <div class="alert alert-info mt-3">
+        <pre class="mb-0">@Model.Answer</pre>
+    </div>
+}

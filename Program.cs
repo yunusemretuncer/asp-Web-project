@@ -18,6 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddSingleton<GroqService>();
+
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

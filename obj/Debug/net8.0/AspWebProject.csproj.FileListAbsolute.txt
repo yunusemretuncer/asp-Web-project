@@ -286,3 +286,8 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\refint\Asp
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.pdb
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.genruntimeconfig.cache
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\ref\AspWebProject.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\libman.json
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\OpenAI.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Net.ServerSentEvents.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Groq.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\GroqNet.dll
