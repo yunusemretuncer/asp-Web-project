@@ -1,1 +1,37 @@
 
+XFit – Spor Salonu Yönetim ve Randevu Sistemi
+
+XFit, spor salonları için geliştirilmiş bir ASP.NET Core MVC tabanlı yönetim ve randevu sistemidir.
+Salonlar, hizmetler, eğitmenler ve randevular tek bir arayüz üzerinden yönetilir.
+
+Temel Özellikler
+
+Fitness Center Yönetimi: Salon ekleme, düzenleme, çalışma saatleri tanımlama
+
+Hizmet Yönetimi: (Fitness, yoga, pilates vb.) süre ve ücret belirleme
+
+Eğitmen Yönetimi: Uzmanlık, hizmet ilişkileri, çalışma saatleri
+
+Randevu Sistemi: Kullanıcıların uygun eğitmenlere göre randevu oluşturması
+
+AI Destekli Fitness Önerisi: Kullanıcının boy–kilo–vücut tipine göre kişisel egzersiz önerisi üretir
+
+REST API: Eğitmen, hizmet ve randevu filtrelemeleri API üzerinden yapılır
+
+Çalışma Mantığı (Kısaca)
+
+Admin, salon–hizmet–eğitmen yapılarını tanımlar.
+
+Eğitmenlerin çalışma saatleri ve verdikleri hizmetler sisteme eklenir.
+
+Kullanıcı, uygun olan eğitmen ve hizmete göre randevu oluşturur.
+
+Sistem REST API üzerinden uygunluk kontrolleri yaparak kullanıcıyı yönlendirir.
+
+İsteğe bağlı olarak kullanıcı, AI modülüyle kişisel fitness önerisi alabilir.
+
+api-key yüklenemedigi icin eski api-key var yoksa calısıyor raporda gösterildigi üzere
+
+admin girişi için
+G231210045@sau.com
+Sau123!
