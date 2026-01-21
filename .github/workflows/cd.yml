@@ -1,0 +1,28 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  deploy-dev:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Download artifact from CI run
+        uses: actions/download-artifact@v4
+        with:
+          name: app-publish
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show what would be deployed
+        run: |
+          echo "Artifact contents:"
+          ls -la
+
+    
+    
