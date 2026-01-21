@@ -1,0 +1,13 @@
+# ===== .NET build outputs =====
+**/bin/
+**/obj/
+
+# ===== Visual Studio / user-specific =====
+.vs/
+*.user
+*.suo
+
+# ===== Logs / misc =====
+*.log
+Thumbs.db
+.DS_Store

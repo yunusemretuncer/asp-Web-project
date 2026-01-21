@@ -20,6 +20,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.22" />
     <PackageReference Include="OpenAI" Version="2.8.0" />
+
+    <Compile Remove="AspWebProject.Tests/**" />
+    <Content Remove="AspWebProject.Tests/**" />
+    <None Remove="AspWebProject.Tests/**" />
   </ItemGroup>
 
 </Project>
