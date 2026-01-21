@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj": {}
+    "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.Tests\\AspWebProject.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj": {
+    "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.Tests\\AspWebProject.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj",
-        "projectName": "AspWebProject",
-        "projectPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj",
+        "projectUniqueName": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.Tests\\AspWebProject.Tests.csproj",
+        "projectName": "AspWebProject.Tests",
+        "projectPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.Tests\\AspWebProject.Tests.csproj",
         "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\obj\\",
+        "outputPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -22,15 +22,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net9.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -47,38 +47,24 @@
         "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+            "Microsoft.NET.Test.Sdk": {
               "target": "Package",
-              "version": "[8.0.22, )"
+              "version": "[17.12.0, )"
             },
-            "Microsoft.AspNetCore.Identity.UI": {
+            "coverlet.collector": {
               "target": "Package",
-              "version": "[8.0.22, )"
+              "version": "[6.0.2, )"
             },
-            "Microsoft.EntityFrameworkCore": {
+            "xunit": {
               "target": "Package",
-              "version": "[8.0.22, )"
+              "version": "[2.9.2, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "xunit.runner.visualstudio": {
               "target": "Package",
-              "version": "[8.0.22, )"
-            },
-            "Microsoft.EntityFrameworkCore.Sqlite": {
-              "target": "Package",
-              "version": "[8.0.11, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.22, )"
-            },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[8.0.7, )"
+              "version": "[2.8.2, )"
             }
           },
           "imports": [
@@ -93,9 +79,6 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

@@ -8330,11 +8330,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PC\\source\\repos\\AspWebProject\\AspWebProject\\AspWebProject.csproj",
+      "projectUniqueName": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj",
       "projectName": "AspWebProject",
-      "projectPath": "C:\\Users\\PC\\source\\repos\\AspWebProject\\AspWebProject\\AspWebProject.csproj",
+      "projectPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\AspWebProject.csproj",
       "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PC\\source\\repos\\AspWebProject\\AspWebProject\\obj\\",
+      "outputPath": "C:\\Users\\PC\\OneDrive\\Belgeler\\GitHub\\asp-Web-project\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
