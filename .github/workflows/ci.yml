@@ -27,3 +27,14 @@ jobs:
 
       - name: Test
         run: dotnet test --configuration Release --no-build
+
+        # ✅ Build the deployable output
+      - name: Publish
+        run: dotnet publish -c Release -o publish
+
+        # ✅ Upload artifact for later deployment
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-publish
+          path: publish
