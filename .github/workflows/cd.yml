@@ -25,6 +25,11 @@ jobs:
           echo "run_id=${{ github.event.workflow_run.id }}" >> release.txt
           echo "workflow=CI -> CD" >> release.txt
           cat release.txt
+      - name: Upload release manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest
+          path: release.txt
 
 
       - name: Show what would be deployed
