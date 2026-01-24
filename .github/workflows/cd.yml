@@ -19,6 +19,14 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create release manifest
+        run: |
+          echo "commit=${{ github.event.workflow_run.head_sha }}" > release.txt
+          echo "run_id=${{ github.event.workflow_run.id }}" >> release.txt
+          echo "workflow=CI -> CD" >> release.txt
+          cat release.txt
+
+
       - name: Show what would be deployed
         run: |
           echo "Artifact contents:"
