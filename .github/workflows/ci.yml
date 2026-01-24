@@ -28,13 +28,13 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore AspWebProject.sln
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build AspWebProject.sln -c Release --no-restore /warnaserror
 
       - name: Test
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test AspWebProject.sln -c Release --no-build
 
         # ✅ Build the deployable output
       - name: Publish
