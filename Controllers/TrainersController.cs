@@ -24,7 +24,7 @@ namespace AspWebProject.Controllers
                 .Where(ts => ts.ServiceId == serviceId)
                 .Include(ts => ts.Trainer)
                 .Select(ts => new {
-                    id = ts.Trainer.Id,
+                    id = ts.Trainer!.Id, // Safe to use ! after the null check
                     fullName = ts.Trainer.FullName
                 })
                 .ToList();
@@ -58,9 +58,9 @@ namespace AspWebProject.Controllers
             if (id == null)
                 return NotFound();
 
-            var trainer = await _context.Trainers
-                .Include(t => t.FitnessCenter)                 
-                .Include(t => t.TrainerServices)
+            var trainer = await _context.Trainers 
+                .Include(t => t.FitnessCenter!)                 
+                .Include(t => t.TrainerServices!)
                     .ThenInclude(ts => ts.Service)
                 .Include(t => t.Availabilities)
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -80,6 +80,7 @@ namespace AspWebProject.Controllers
             var vm = new TrainerEditViewModel
             {
                 Trainer = new Trainer(),
+
                 AllServices = new List<Service>(),
                 SelectedServiceIds = new List<int>()
             };
@@ -127,18 +128,22 @@ namespace AspWebProject.Controllers
             }
 
             // 1) Enabled olmayan availability alanlarının zorunluluğunu kaldır
-            for (int i = 0; i < vm.Availabilities.Count; i++)
+            if (vm.Availabilities != null)
             {
-                if (!vm.Availabilities[i].Enabled)
+                for (int i = 0; i < vm.Availabilities.Count; i++)
                 {
-                    ModelState.Remove($"Availabilities[{i}].StartTime");
-                    ModelState.Remove($"Availabilities[{i}].EndTime");
+                    if (!vm.Availabilities[i].Enabled)
+                    {
+                        ModelState.Remove($"Availabilities[{i}].StartTime");
+                        ModelState.Remove($"Availabilities[{i}].EndTime");
+                    }
                 }
             }
 
             // 2) FITNESS CENTER çalışma saatleri kontrolü
-            var fc = await _context.FitnessCenters
-     .FirstOrDefaultAsync(f => f.Id == vm.Trainer.FitnessCenterId);
+            var fc = vm.Trainer?.FitnessCenterId != null
+    ? await _context.FitnessCenters.FirstOrDefaultAsync(f => f.Id == vm.Trainer.FitnessCenterId)
+    : null;
 
             if (fc == null)
             {
@@ -149,7 +154,7 @@ namespace AspWebProject.Controllers
                 TimeSpan fcStart = fc.OpenTime;
                 TimeSpan fcEnd = fc.CloseTime;
 
-                foreach (var a in vm.Availabilities.Where(x => x.Enabled))
+                foreach (var a in (vm.Availabilities ?? Enumerable.Empty<AvailabilityInput>()).Where(x => x.Enabled))
                 {
                     if (a.StartTime < fcStart || a.EndTime > fcEnd)
                     {
@@ -177,45 +182,58 @@ namespace AspWebProject.Controllers
             // 3) EXPERTISE STRING OLUŞTUR (YENİ EKLEDİK)
             // -----------------------------------------
             var selectedServices = await _context.Services
-                .Where(s => vm.SelectedServiceIds.Contains(s.Id))
+                .Where(s => (vm.SelectedServiceIds ?? new List<int>()).Contains(s.Id))
                 .Select(s => s.Name)
                 .ToListAsync();
 
-            vm.Trainer.Expertise = string.Join(", ", selectedServices);
-            Console.WriteLine("Generated Expertise: " + vm.Trainer.Expertise);
+            if (vm.Trainer != null)
+            {
+                vm.Trainer.Expertise = string.Join(", ", selectedServices);
+                Console.WriteLine("Generated Expertise: " + vm.Trainer.Expertise);
+            }
 
             // -----------------------------------------
             // 4) Trainer kayıt
             // -----------------------------------------
-            _context.Trainers.Add(vm.Trainer);
+            if (vm.Trainer != null)
+            {
+                _context.Trainers.Add(vm.Trainer);
+            }
+
             await _context.SaveChangesAsync();
 
             // -----------------------------------------
             // 5) TrainerService kayıt
             // -----------------------------------------
-            foreach (var serviceId in vm.SelectedServiceIds)
+            if (vm.SelectedServiceIds != null && vm.Trainer != null)
             {
-                _context.TrainerServices.Add(new TrainerService
+                foreach (var serviceId in vm.SelectedServiceIds)
                 {
-                    TrainerId = vm.Trainer.Id,
-                    ServiceId = serviceId
-                });
+                    _context.TrainerServices.Add(new TrainerService
+                    {
+                        TrainerId = vm.Trainer.Id,
+                        ServiceId = serviceId
+                    });
+                }
             }
 
             // -----------------------------------------
             // 6) Availability kayıt
             // -----------------------------------------
-            foreach (var a in vm.Availabilities)
+            if (vm.Trainer != null && vm.Availabilities != null)
             {
-                if (a.Enabled)
+                foreach (var a in vm.Availabilities)
                 {
-                    _context.TrainerAvailabilities.Add(new TrainerAvailability
+                    if (a.Enabled)
                     {
-                        TrainerId = vm.Trainer.Id,
-                        Day = a.Day,
-                        StartTime = a.StartTime,
-                        EndTime = a.EndTime
-                    });
+                        _context.TrainerAvailabilities.Add(new TrainerAvailability
+                        {
+                            TrainerId = vm.Trainer.Id,
+                            Day = a.Day,
+                            StartTime = a.StartTime,
+                            EndTime = a.EndTime
+                        });
+                    }
                 }
             }
 
@@ -249,17 +267,17 @@ namespace AspWebProject.Controllers
             {
                 Trainer = trainer,
                 AllServices = await _context.Services.ToListAsync(),
-                SelectedServiceIds = trainer.TrainerServices.Select(ts => ts.ServiceId).ToList(),
-
-                
+                SelectedServiceIds = (trainer.TrainerServices ?? new List<TrainerService>()).Select(ts => ts.ServiceId).ToList(),
+                Availabilities = new List<AvailabilityInput>() // <-- Ensure Availabilities is not null
             };
 
             // Hiç availability yoksa default 5 gün oluştur (Pazartesi–Cuma)
             for (int i = 0; i < 5; i++)
             {
                 var day = (DayOfWeek)(i + 1); // Mon–Fri
-                var exist = trainer.Availabilities
-                    .FirstOrDefault(a => a.Day == day);
+                var exist = trainer.Availabilities != null
+                    ? trainer.Availabilities.FirstOrDefault(a => a.Day == day)
+                    : null;
 
                 vm.Availabilities.Add(new AvailabilityInput
                 {
@@ -289,12 +307,15 @@ namespace AspWebProject.Controllers
                 return NotFound();
 
             // Disabled olan availability'lerin validation'ını kaldır
-            for (int i = 0; i < vm.Availabilities.Count; i++)
+            if (vm.Availabilities != null)
             {
-                if (!vm.Availabilities[i].Enabled)
+                for (int i = 0; i < vm.Availabilities.Count; i++)
                 {
-                    ModelState.Remove($"Availabilities[{i}].StartTime");
-                    ModelState.Remove($"Availabilities[{i}].EndTime");
+                    if (!vm.Availabilities[i].Enabled)
+                    {
+                        ModelState.Remove($"Availabilities[{i}].StartTime");
+                        ModelState.Remove($"Availabilities[{i}].EndTime");
+                    }
                 }
             }
 
@@ -303,7 +324,7 @@ namespace AspWebProject.Controllers
 
             if (fc != null)
             {
-                foreach (var a in vm.Availabilities.Where(a => a.Enabled))
+                foreach (var a in (vm.Availabilities ?? Enumerable.Empty<AvailabilityInput>()).Where(a => a.Enabled))
                 {
                     if (a.StartTime < fc.OpenTime || a.EndTime > fc.CloseTime)
                     {
@@ -331,18 +352,21 @@ namespace AspWebProject.Controllers
             var oldServices = _context.TrainerServices.Where(ts => ts.TrainerId == vm.Trainer.Id);
             _context.RemoveRange(oldServices);
 
-            foreach (var sid in vm.SelectedServiceIds)
+            if (vm.SelectedServiceIds != null)
             {
-                _context.TrainerServices.Add(new TrainerService
+                foreach (var sid in vm.SelectedServiceIds)
                 {
-                    TrainerId = vm.Trainer.Id,
-                    ServiceId = sid
-                });
+                    _context.TrainerServices.Add(new TrainerService
+                    {
+                        TrainerId = vm.Trainer.Id,
+                        ServiceId = sid
+                    });
+                }
             }
 
             // Expertise string güncelle
             var names = _context.Services
-                .Where(s => vm.SelectedServiceIds.Contains(s.Id))
+                .Where(s => (vm.SelectedServiceIds ?? new List<int>()).Contains(s.Id))
                 .Select(s => s.Name)
                 .ToList();
             vm.Trainer.Expertise = string.Join(", ", names);
@@ -351,17 +375,20 @@ namespace AspWebProject.Controllers
             var oldAvail = _context.TrainerAvailabilities.Where(a => a.TrainerId == vm.Trainer.Id);
             _context.RemoveRange(oldAvail);
 
-            foreach (var a in vm.Availabilities)
+            if (vm.Availabilities != null)
             {
-                if (a.Enabled)
+                foreach (var a in vm.Availabilities)
                 {
-                    _context.TrainerAvailabilities.Add(new TrainerAvailability
+                    if (a.Enabled)
                     {
-                        TrainerId = vm.Trainer.Id,
-                        Day = a.Day,
-                        StartTime = a.StartTime,
-                        EndTime = a.EndTime
-                    });
+                        _context.TrainerAvailabilities.Add(new TrainerAvailability
+                        {
+                            TrainerId = vm.Trainer.Id,
+                            Day = a.Day,
+                            StartTime = a.StartTime,
+                            EndTime = a.EndTime
+                        });
+                    }
                 }
             }
 
@@ -400,8 +427,10 @@ namespace AspWebProject.Controllers
 
             if (trainer != null)
             {
-                _context.TrainerServices.RemoveRange(trainer.TrainerServices);
-                _context.TrainerAvailabilities.RemoveRange(trainer.Availabilities);
+                if (trainer.TrainerServices != null)
+                    _context.TrainerServices.RemoveRange(trainer.TrainerServices);
+                if (trainer.Availabilities != null)
+                    _context.TrainerAvailabilities.RemoveRange(trainer.Availabilities);
                 _context.Trainers.Remove(trainer);
                 await _context.SaveChangesAsync();
             }

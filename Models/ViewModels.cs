@@ -2,7 +2,7 @@
 {
     public class TrainerEditViewModel
     {
-        public Trainer Trainer { get; set; }
+        public required Trainer Trainer { get; set; }
 
         public List<Service>? AllServices { get; set; }
 

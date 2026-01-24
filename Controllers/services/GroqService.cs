@@ -13,6 +13,8 @@ public class GroqService
     public GroqService(IConfiguration config)
     {
         var apiKey = config["Groq:ApiKey"];
+        if (string.IsNullOrWhiteSpace(apiKey))
+            throw new ArgumentException("Groq:ApiKey configuration value is missing or empty.", nameof(config));
         _client = new GroqClient(apiKey);
         _primaryModel = config["Groq:Model"];
         _fallbackModels = config.GetSection("Groq:FallbackModels").Get<string[]>() ?? System.Array.Empty<string>();
@@ -44,7 +46,7 @@ public class GroqService
                     model: model
                 );
 
-                return response.Choices[0].Message.Content;
+                return response.Choices[0].Message.Content ?? string.Empty;
             }
             catch (InvalidOperationException ex) when (ex.Message?.Contains("model_not_found") == true
                                                        || ex.Message?.Contains("does not exist") == true

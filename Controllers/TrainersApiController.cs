@@ -20,7 +20,8 @@ public class TrainersApiController : ControllerBase
     {
         var query = _context.Trainers
             .Include(t => t.FitnessCenter)
-            .Include(t => t.TrainerServices).ThenInclude(ts => ts.Service)
+            .Include(t => t.TrainerServices!)
+                .ThenInclude(ts => ts.Service)
             .Include(t => t.Availabilities)
             .AsQueryable();
 
@@ -30,18 +31,18 @@ public class TrainersApiController : ControllerBase
 
         // Gün filtrele
         if (day.HasValue)
-            query = query.Where(t => t.Availabilities.Any(a => a.Day == day.Value));
+            query = query.Where(t => t.Availabilities != null && t.Availabilities.Any(a => a.Day == day.Value));
 
         // Hizmete göre filtrele
         if (serviceId.HasValue)
-            query = query.Where(t => t.TrainerServices.Any(ts => ts.ServiceId == serviceId.Value));
+            query = query.Where(t => t.TrainerServices != null && t.TrainerServices.Any(ts => ts.ServiceId == serviceId.Value));
 
         var result = await query
             .Select(t => new {
                 t.Id,
                 t.FullName,
                 t.Expertise,
-                FitnessCenter = t.FitnessCenter.Name
+                FitnessCenter = t.FitnessCenter != null ? t.FitnessCenter.Name : string.Empty
             })
             .ToListAsync();
 

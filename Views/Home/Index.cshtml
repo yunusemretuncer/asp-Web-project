@@ -1,8 +1,8 @@
 ﻿@{
     ViewData["FullScreen"] = true;
-    
-    bool isLoggedIn = User.Identity.IsAuthenticated;
-    string username = User.Identity.Name;
+
+    bool isLoggedIn = User?.Identity?.IsAuthenticated ?? false;
+    string username = User?.Identity?.Name ?? "";
 }
 
 <style>

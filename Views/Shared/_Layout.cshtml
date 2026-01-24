@@ -132,7 +132,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Trainers" asp-action="Index">Trainers</a>
                             </li>
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Appointments" asp-action="Index">Appointments</a>
@@ -151,7 +151,7 @@
 
                     <ul class="navbar-nav ms-auto">
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <!-- PROFIL -->
                             <li class="nav-item">

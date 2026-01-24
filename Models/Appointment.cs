@@ -7,7 +7,7 @@ namespace AspWebProject.Models
         public int Id { get; set; }
 
         
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
         public ApplicationUser? User { get; set; }
         
         public int FitnessCenterId { get; set; }
@@ -21,7 +21,7 @@ namespace AspWebProject.Models
 
         public DateTime Date { get; set; }
         [NotMapped]
-        public string HourString { get; set; }
+        public string HourString { get; set; } = string.Empty;
 
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
     }

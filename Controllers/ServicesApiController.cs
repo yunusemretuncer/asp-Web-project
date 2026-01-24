@@ -33,7 +33,7 @@ public class ServicesApiController : ControllerBase
                 s.Name,
                 s.Duration,
                 s.Price,
-                FitnessCenter = s.FitnessCenter.Name
+                FitnessCenter = s.FitnessCenter != null ? s.FitnessCenter.Name : string.Empty
             })
             .ToListAsync();
 

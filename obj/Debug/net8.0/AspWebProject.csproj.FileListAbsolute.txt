@@ -1,5 +1,6 @@
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\appsettings.json
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\libman.json
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\AspWebProject.staticwebassets.runtime.json
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\AspWebProject.staticwebassets.endpoints.json
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\AspWebProject.exe
@@ -9,6 +10,8 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\AspWebProj
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\AspWebProject.pdb
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Groq.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\GroqNet.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Humanizer.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -76,6 +79,7 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\NuGet.Pack
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\NuGet.ProjectModel.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\NuGet.Protocol.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\NuGet.Versioning.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\OpenAI.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\SQLitePCLRaw.batteries_v2.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\SQLitePCLRaw.core.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\SQLitePCLRaw.provider.e_sqlite3.dll
@@ -89,6 +93,7 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Com
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Memory.Data.dll
+C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Net.ServerSentEvents.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Reflection.MetadataLoadContext.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Runtime.Caching.dll
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
@@ -286,8 +291,3 @@ C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\refint\Asp
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.pdb
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\AspWebProject.genruntimeconfig.cache
 C:\Users\PC\source\repos\AspWebProject\AspWebProject\obj\Debug\net8.0\ref\AspWebProject.dll
-C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\libman.json
-C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\OpenAI.dll
-C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\System.Net.ServerSentEvents.dll
-C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\Groq.dll
-C:\Users\PC\source\repos\AspWebProject\AspWebProject\bin\Debug\net8.0\GroqNet.dll

@@ -21,13 +21,13 @@
 
     <h4 class="mb-2">Verdiği Hizmetler</h4>
 
-    @if (Model.TrainerServices.Any())
+    @if (Model.TrainerServices != null && Model.TrainerServices.Any())
     {
         <ul class="list-group mb-3">
             @foreach (var s in Model.TrainerServices)
             {
                 <li class="list-group-item">
-                    <i class="bi bi-dot"></i> @s.Service.Name
+                    <i class="bi bi-dot"></i> @(s.Service?.Name ?? "<span class=\"text-danger\">(No Service)</span>")
                 </li>
             }
         </ul>
@@ -41,7 +41,7 @@
 
     <h4 class="mb-2">Haftalık Çalışma Saatleri</h4>
 
-    @if (Model.Availabilities.Any())
+    @if (Model.Availabilities != null && Model.Availabilities.Any())
     {
         <ul class="list-group mb-3">
             @foreach (var a in Model.Availabilities.OrderBy(x => x.Day))

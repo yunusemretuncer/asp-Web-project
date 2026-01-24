@@ -34,13 +34,13 @@
 
         <div class="border rounded p-3 mb-4" id="services-area">
             <ul class="list-group">
-                @foreach (var s in Model.AllServices)
+                @foreach (var s in Model.AllServices ?? Enumerable.Empty<AspWebProject.Models.Service>())
                 {
                     <li class="list-group-item">
                         <input type="checkbox"
                                name="SelectedServiceIds"
                                value="@s.Id"
-                               @(Model.SelectedServiceIds.Contains(s.Id) ? "checked" : "") />
+                               @(Model.SelectedServiceIds != null && Model.SelectedServiceIds.Contains(s.Id) ? "checked" : "") />
                         @s.Name
                     </li>
                 }
@@ -51,47 +51,50 @@
         <h4 class="mt-4 fw-bold">Haftalık Çalışma Saatleri</h4>
 
         <div class="p-2">
-            @for (int i = 0; i < Model.Availabilities.Count; i++)
+            @if (Model.Availabilities != null)
             {
-                <div class="d-flex align-items-center border-bottom py-2">
+                for (int i = 0; i < Model.Availabilities.Count; i++)
+                {
+                    <div class="d-flex align-items-center border-bottom py-2">
 
-                    <!-- Checkbox -->
-                    <input type="checkbox"
-                           class="form-check-input me-2"
-                           name="Availabilities[@i].Enabled"
-                           value="true"
-                           @(Model.Availabilities[i].Enabled ? "checked" : "") />
+                        <!-- Checkbox -->
+                        <input type="checkbox"
+                               class="form-check-input me-2"
+                               name="Availabilities[@i].Enabled"
+                               value="true"
+                               @(Model.Availabilities[i].Enabled ? "checked" : "") />
 
-                    <!-- Gün adı -->
-                    <label class="me-3 fw-bold"
-                           style="width:140px; font-size:0.9rem;">
-                        @Model.Availabilities[i].Day
-                    </label>
+                        <!-- Gün adı -->
+                        <label class="me-3 fw-bold"
+                               style="width:140px; font-size:0.9rem;">
+                            @Model.Availabilities[i].Day
+                        </label>
 
-                    <input type="hidden"
-                           name="Availabilities[@i].Day"
-                           value="@Model.Availabilities[i].Day" />
+                        <input type="hidden"
+                               name="Availabilities[@i].Day"
+                               value="@Model.Availabilities[i].Day" />
 
-                    <!-- Başlangıç -->
-                    <div class="d-flex flex-column me-3">
-                        <label class="form-label m-0" style="font-size:0.75rem;">Başlangıç</label>
-                        <input type="time"
-                               class="form-control form-control-sm"
-                               style="width:120px;"
-                               name="Availabilities[@i].StartTime"
-                               value="@Model.Availabilities[i].StartTime" />
+                        <!-- Başlangıç -->
+                        <div class="d-flex flex-column me-3">
+                            <label class="form-label m-0" style="font-size:0.75rem;">Başlangıç</label>
+                            <input type="time"
+                                   class="form-control form-control-sm"
+                                   style="width:120px;"
+                                   name="Availabilities[@i].StartTime"
+                                   value="@Model.Availabilities[i].StartTime" />
+                        </div>
+
+                        <!-- Bitiş -->
+                        <div class="d-flex flex-column">
+                            <label class="form-label m-0" style="font-size:0.75rem;">Bitiş</label>
+                            <input type="time"
+                                   class="form-control form-control-sm"
+                                   style="width:120px;"
+                                   name="Availabilities[@i].EndTime"
+                                   value="@Model.Availabilities[i].EndTime" />
+                        </div>
                     </div>
-
-                    <!-- Bitiş -->
-                    <div class="d-flex flex-column">
-                        <label class="form-label m-0" style="font-size:0.75rem;">Bitiş</label>
-                        <input type="time"
-                               class="form-control form-control-sm"
-                               style="width:120px;"
-                               name="Availabilities[@i].EndTime"
-                               value="@Model.Availabilities[i].EndTime" />
-                    </div>
-                </div>
+                }
             }
         </div>
 

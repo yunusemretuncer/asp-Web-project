@@ -87,7 +87,7 @@ namespace AspWebProject.Controllers
             Console.WriteLine("===== APPOINTMENT CREATE DEBUG =====");
 
             // LOGIN USER
-            appointment.UserId = _userManager.GetUserId(User);
+            appointment.UserId = _userManager.GetUserId(User) ?? string.Empty;
             ModelState.Remove("UserId");
 
             Console.WriteLine($"UserId = {appointment.UserId}");

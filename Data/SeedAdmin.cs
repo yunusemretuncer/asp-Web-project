@@ -2,7 +2,7 @@
 {
     using AspWebProject.Models;
     using Microsoft.AspNetCore.Identity;
-    using AspWebProject.Models;
+    
 
     public static class SeedAdmin
     {

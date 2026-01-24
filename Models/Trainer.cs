@@ -7,13 +7,13 @@ namespace AspWebProject.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        public string FullName { get; set; }
+        
+        public  string? FullName { get; set; }
         public string? Expertise { get; set; }
         public int FitnessCenterId { get; set; }
         public FitnessCenter? FitnessCenter { get; set; }
 
-        public ICollection<TrainerService>? TrainerServices { get; set; }
+        public ICollection<TrainerService>? TrainerServices { get; set; } = new List<TrainerService>();
 
         public ICollection<Appointment>? Appointments { get; set; } = new List<Appointment>();
         public ICollection<TrainerAvailability>? Availabilities { get; set; } = new List<TrainerAvailability>();

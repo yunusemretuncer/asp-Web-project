@@ -8,8 +8,8 @@
     {
         public int Id { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+        
+        public required string Name { get; set; }
 
         public int Duration { get; set; } // dakika
         [Column(TypeName = "decimal(18,2)")]

@@ -78,10 +78,10 @@ public class AppointmentsApiController : ControllerBase
             {
                 id = a.Id,
                 date = a.Date.ToString("yyyy-MM-dd HH:mm"),
-                service = a.Service.Name,
-                trainer = a.Trainer.FullName,
-                center = a.FitnessCenter.Name,
-                user = a.User.UserName,
+                service = a.Service != null ? a.Service.Name : string.Empty,
+                trainer = a.Trainer != null ? a.Trainer.FullName : string.Empty,
+                center = a.FitnessCenter != null ? a.FitnessCenter.Name : string.Empty,
+                user = a.User != null ? a.User.UserName : string.Empty,
                 status = a.Status.ToString()
             })
             .ToListAsync();
