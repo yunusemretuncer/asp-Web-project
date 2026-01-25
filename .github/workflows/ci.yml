@@ -2,12 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build-test:
+  validate:
+    name: Validate (restore)
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +19,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      
+
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
@@ -30,17 +31,59 @@ jobs:
       - name: Restore
         run: dotnet restore AspWebProject.sln
 
-      - name: Build
+  build_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: validate
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Build (warnings as errors)
         run: dotnet build AspWebProject.sln -c Release --no-restore /warnaserror
 
       - name: Test
         run: dotnet test AspWebProject.sln -c Release --no-build
 
-        # ✅ Build the deployable output
-      - name: Publish
-        run: dotnet publish -c Release -o publish
+  package:
+    name: Package Artifact
+    runs-on: ubuntu-latest
+    needs: build_test
 
-        # ✅ Upload artifact for later deployment
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Publish
+        run: dotnet publish AspWebProject.sln -c Release -o publish --no-restore
+
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
         with:
