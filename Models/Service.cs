@@ -8,14 +8,14 @@
     {
         public int Id { get; set; }
 
-        
+
         public required string Name { get; set; }
 
         public int Duration { get; set; } // dakika
         [Column(TypeName = "decimal(18,2)")]
         [Range(0.1, 9999)]
         public decimal Price { get; set; }
-        
+
         public int FitnessCenterId { get; set; }
         public FitnessCenter? FitnessCenter { get; set; }
         [ValidateNever]

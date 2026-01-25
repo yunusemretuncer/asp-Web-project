@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace AspWebProject.Controllers
 {
-    
+
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        
+
         public AppointmentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;

@@ -9,7 +9,7 @@ using NuGet.DependencyResolver;
 
 namespace AspWebProject.Controllers
 {
-    
+
     public class TrainersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,7 +23,8 @@ namespace AspWebProject.Controllers
             var trainers = _context.TrainerServices
                 .Where(ts => ts.ServiceId == serviceId)
                 .Include(ts => ts.Trainer)
-                .Select(ts => new {
+                .Select(ts => new
+                {
                     id = ts.Trainer!.Id, // Safe to use ! after the null check
                     fullName = ts.Trainer.FullName
                 })
@@ -58,8 +59,8 @@ namespace AspWebProject.Controllers
             if (id == null)
                 return NotFound();
 
-            var trainer = await _context.Trainers 
-                .Include(t => t.FitnessCenter!)                 
+            var trainer = await _context.Trainers
+                .Include(t => t.FitnessCenter!)
                 .Include(t => t.TrainerServices!)
                     .ThenInclude(ts => ts.Service)
                 .Include(t => t.Availabilities)

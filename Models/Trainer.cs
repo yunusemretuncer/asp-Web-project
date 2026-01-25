@@ -7,8 +7,8 @@ namespace AspWebProject.Models
     {
         public int Id { get; set; }
 
-        
-        public  string? FullName { get; set; }
+
+        public string? FullName { get; set; }
         public string? Expertise { get; set; }
         public int FitnessCenterId { get; set; }
         public FitnessCenter? FitnessCenter { get; set; }

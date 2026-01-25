@@ -13,7 +13,7 @@ public class TrainersApiController : ControllerBase
         _context = context;
     }
 
-   
+
 
     [HttpGet("filter")]
     public async Task<IActionResult> Filter(int? fitnessCenterId, DayOfWeek? day, int? serviceId)
@@ -38,7 +38,8 @@ public class TrainersApiController : ControllerBase
             query = query.Where(t => t.TrainerServices != null && t.TrainerServices.Any(ts => ts.ServiceId == serviceId.Value));
 
         var result = await query
-            .Select(t => new {
+            .Select(t => new
+            {
                 t.Id,
                 t.FullName,
                 t.Expertise,

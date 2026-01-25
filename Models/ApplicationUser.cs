@@ -4,7 +4,7 @@
 
     public class ApplicationUser : IdentityUser
     {
-        
+
         public string? FullName { get; set; }
         public int? Height { get; set; }
         public int? Weight { get; set; }

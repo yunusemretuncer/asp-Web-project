@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AspWebProject.Controllers
 {
-    
+
     public class FitnessCentersController : Controller
     {
         private readonly ApplicationDbContext _context;
