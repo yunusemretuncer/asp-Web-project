@@ -31,7 +31,7 @@ jobs:
       - name: Restore
         run: dotnet restore AspWebProject.sln
 
-   build_test:
+  build_test:
     name: Build & Test
     runs-on: ubuntu-latest
     needs: validate
