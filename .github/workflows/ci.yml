@@ -83,9 +83,12 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+      - name: Restore
+        run: dotnet restore AspWebProject.sln
 
-      - name: Publish
-        run: dotnet publish AspWebProject.sln -c Release -o publish --no-restore
+      - name: Publish (web app)
+        run: dotnet publish AspWebProject.csproj -c Release -o publish --no-restore
+
 
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
