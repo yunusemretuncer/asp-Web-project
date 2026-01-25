@@ -113,10 +113,23 @@ jobs:
             ${{ runner.os }}-nuget-
       - name: Restore
         run: dotnet restore AspWebProject.sln
+      
+      - name: Set build version
+        run: |
+          echo "VERSION=1.0.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Publish (web app)
-        run: dotnet publish AspWebProject.csproj -c Release -o publish --no-restore
-
+        run: |
+          dotnet publish AspWebProject.sln \
+            -c Release \
+            -o publish \
+            /p:Version=${{ env.VERSION }} \
+            /p:InformationalVersion=${{ env.VERSION }}
+      
+      - name: Create version file
+        run: |
+          echo "version=${{ env.VERSION }}" > publish/version.txt
+          echo "commit=${{ github.sha }}" >> publish/version.txt
 
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
