@@ -144,7 +144,7 @@ jobs:
           
       - name: Build Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}/aspwebproject
+          IMAGE_NAME=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject
           docker build -t $IMAGE_NAME:${{ env.VERSION }} .
           docker tag $IMAGE_NAME:${{ env.VERSION }} $IMAGE_NAME:latest
 
