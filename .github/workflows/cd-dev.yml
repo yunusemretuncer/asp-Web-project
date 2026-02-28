@@ -1,5 +1,8 @@
 name: CD-Dev
 
+permissions:
+  contents: read
+  packages: read
 on:
   workflow_run:
     workflows: ["CI"]
@@ -12,6 +15,8 @@ jobs:
     environment: dev
 
     steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Pull image
         run: docker pull ghcr.io/yunusemretuncer/aspwebproject:latest
 
