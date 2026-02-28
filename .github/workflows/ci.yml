@@ -154,6 +154,16 @@ jobs:
         run: |
           docker push ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
           docker push ${{ env.IMAGE_NAME }}:latest
+
+      - name: Run container smoke test
+        run: |
+          docker run -d -p 8080:80 \
+            --name testcontainer \
+            ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+
+          sleep 10
+
+          docker logs testcontainer
           
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
