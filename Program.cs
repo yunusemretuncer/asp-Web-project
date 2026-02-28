@@ -20,6 +20,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddSingleton<GroqService>();
 
+var grokKey = Environment.GetEnvironmentVariable("GROK_KEY");
+
+if (string.IsNullOrWhiteSpace(grokKey))
+{
+    throw new Exception("GROK_KEY is missing!");
+}
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
