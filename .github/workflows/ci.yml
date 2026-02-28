@@ -163,7 +163,17 @@ jobs:
 
           sleep 10
 
-          docker logs testcontainer
+          STATUS=$(docker inspect -f '{{.State.Running}}' testcontainer)
+
+          if [ "$STATUS" != "true" ]; then
+            echo "Container is not running!"
+            docker logs testcontainer
+            exit 1
+          fi
+
+          echo "Container is running successfully."
+ 
+     
           
       - name: Upload publish artifact
         uses: actions/upload-artifact@v4
