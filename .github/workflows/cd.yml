@@ -1,4 +1,4 @@
-name: CD
+name: CD-Dev
 
 on:
   workflow_run:
@@ -12,30 +12,18 @@ jobs:
     environment: dev
 
     steps:
-      - name: Download artifact from CI run
-        uses: actions/download-artifact@v4
-        with:
-          name: app-publish
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull image
+        run: docker pull ghcr.io/yunusemretuncer/aspwebproject:latest
 
-      - name: Create release manifest
+      - name: Run container
         run: |
-          echo "commit=${{ github.event.workflow_run.head_sha }}" > release.txt
-          echo "run_id=${{ github.event.workflow_run.id }}" >> release.txt
-          echo "workflow=CI -> CD" >> release.txt
-          cat release.txt
-      - name: Upload release manifest
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-manifest
-          path: release.txt
+          docker run -d -p 8080:80 \
+            -e GROK_KEY=${{ secrets.GROK_KEY }} \
+            ghcr.io/yunusemretuncer/aspwebproject:latest
 
-
-      - name: Show what would be deployed
+      - name: Verify container
         run: |
-          echo "Artifact contents:"
-          ls -la
-
+          sleep 5
+          docker ps
     
     
