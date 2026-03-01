@@ -1,0 +1,33 @@
+name: CD - Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Pull image
+        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+
+      - name: Run container
+        run: |
+          docker run -d -p 80:80 \
+            -e GROK_KEY=${{ secrets.GROK_KEY }} \
+            --name production-container \
+            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+
+      - name: Verify container
+        run: |
+          sleep 5
+          STATUS=$(docker inspect -f '{{.State.Running}}' production-container)
+
+          if [ "$STATUS" != "true" ]; then
+            echo "Production failed"
+            docker logs production-container
+            exit 1
+          fi
+
+          echo "Production running successfully."
