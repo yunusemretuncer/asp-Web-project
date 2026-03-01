@@ -12,14 +12,14 @@ jobs:
 
     steps:
       - name: Pull image
-        run: docker pull ghcr.io/yunusemretuncer/aspwebproject:latest
-
+        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+        
       - name: Run container
         run: |
           docker run -d -p 8081:80 \
             -e GROK_KEY=${{ secrets.GROK_KEY }} \
             --name staging-container \
-            ghcr.io/yunusemretuncer/aspwebproject:latest
+            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
 
       - name: Verify container
         run: |
