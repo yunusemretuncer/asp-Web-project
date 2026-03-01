@@ -1,0 +1,37 @@
+name: CD - Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version to deploy"
+        required: true
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Pull image
+        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
+        
+      - name: Run container
+        run: |
+          docker run -d -p 8081:80 \
+            -e GROK_KEY=${{ secrets.GROK_KEY }} \
+            --name staging-container \
+            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
+
+      - name: Verify container
+        run: |
+          sleep 5
+          STATUS=$(docker inspect -f '{{.State.Running}}' staging-container)
+
+          if [ "$STATUS" != "true" ]; then
+            echo "Staging failed"
+            docker logs staging-container
+            exit 1
+          fi
+
+          echo "Staging running successfully."
