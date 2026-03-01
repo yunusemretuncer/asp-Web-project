@@ -1,9 +1,11 @@
 name: CD - Staging
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version to deploy"
+        required: true
 
 jobs:
   deploy-staging:
@@ -12,14 +14,14 @@ jobs:
 
     steps:
       - name: Pull image
-        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
         
       - name: Run container
         run: |
           docker run -d -p 8081:80 \
             -e GROK_KEY=${{ secrets.GROK_KEY }} \
             --name staging-container \
-            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
 
       - name: Verify container
         run: |
