@@ -2,6 +2,10 @@ name: CD - Production
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version to deploy"
+        required: true
 
 jobs:
   deploy-production:
@@ -10,14 +14,14 @@ jobs:
 
     steps:
       - name: Pull image
-        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+        run: docker pull ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
 
       - name: Run container
         run: |
           docker run -d -p 80:80 \
             -e GROK_KEY=${{ secrets.GROK_KEY }} \
             --name production-container \
-            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:latest
+            ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:${{ github.event.inputs.version }}
 
       - name: Verify container
         run: |
