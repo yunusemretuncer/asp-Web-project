@@ -1,0 +1,35 @@
+name: CD - Staging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Pull image
+        run: docker pull ghcr.io/yunusemretuncer/aspwebproject:latest
+
+      - name: Run container
+        run: |
+          docker run -d -p 8081:80 \
+            -e GROK_KEY=${{ secrets.GROK_KEY }} \
+            --name staging-container \
+            ghcr.io/yunusemretuncer/aspwebproject:latest
+
+      - name: Verify container
+        run: |
+          sleep 5
+          STATUS=$(docker inspect -f '{{.State.Running}}' staging-container)
+
+          if [ "$STATUS" != "true" ]; then
+            echo "Staging failed"
+            docker logs staging-container
+            exit 1
+          fi
+
+          echo "Staging running successfully."
