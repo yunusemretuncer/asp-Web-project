@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: aspwebproject
-          image: ghcr.io/yunusemretuncer/aspwebproject:VERSION_PLACEHOLDER
+          image: ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/aspwebproject:VERSION_PLACEHOLDER
           ports:
             - containerPort: 80
           env:
