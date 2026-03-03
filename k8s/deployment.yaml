@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspwebproject
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aspwebproject
+  template:
+    metadata:
+      labels:
+        app: aspwebproject
+    spec:
+      containers:
+        - name: aspwebproject
+          image: ghcr.io/yunusemretuncer/aspwebproject:VERSION_PLACEHOLDER
+          ports:
+            - containerPort: 80
+          env:
+            - name: GROK_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: grok-secret
+                  key: GROK_KEY
